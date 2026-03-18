@@ -15,13 +15,13 @@
         body { margin: 0; font-family: 'Tajawal', sans-serif; background: var(--dark-bg); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden;}
 
         /* --- شاشة تسجيل الدخول --- */
-        #login-screen { position: fixed; inset: 0; background: var(--dark-bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .login-box { background: var(--card-bg); padding: 40px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 100%; max-width: 350px; }
+        #login-screen { position: fixed; inset: 0; background: var(--dark-bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .login-box { background: var(--card-bg); padding: 40px 20px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 100%; max-width: 350px; box-sizing: border-box; }
         .login-box input { margin-bottom: 20px; text-align: center; font-size: 18px; letter-spacing: 2px; }
         .btn-login { background: var(--primary); width: 100%; padding: 14px; font-size: 18px; }
 
         /* Sidebar & Modals */
-        .sidebar { width: 260px; background: var(--card-bg); height: 100vh; position: fixed; border-left: 1px solid var(--border); padding: 25px; box-sizing: border-box; display: flex; flex-direction: column; z-index: 100;}
+        .sidebar { width: 260px; background: var(--card-bg); height: 100vh; position: fixed; border-left: 1px solid var(--border); padding: 25px; box-sizing: border-box; display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s ease; }
         .logo-side { text-align: center; font-size: 24px; font-weight: 900; margin-bottom: 40px; color: white; display: flex; flex-direction: column; align-items: center; gap: 10px;}
         .logo-side img { width: 80px; height: auto; border-radius: 12px; }
         .logo-side span { color: var(--primary); }
@@ -30,7 +30,7 @@
         .nav-btn:hover { background: #222630; color: white; }
         .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(230, 32, 32, 0.3); }
 
-        .main-content { flex: 1; margin-right: 260px; padding: 40px; box-sizing: border-box; }
+        .main-content { flex: 1; margin-right: 260px; padding: 40px; box-sizing: border-box; transition: margin 0.3s ease; width: 100%; }
         .section { display: none; animation: fadeIn 0.4s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -49,9 +49,12 @@
         input, select { padding: 14px; background: #0f1115; border: 1px solid var(--border); color: white; border-radius: 8px; font-family: 'Tajawal'; font-size: 15px; width: 100%; box-sizing: border-box; outline: none;}
         input:focus, select:focus { border-color: var(--primary); }
         
-        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 12px; overflow: hidden; }
+        /* Table Responsive Wrapper */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
+        
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); overflow: hidden; min-width: 700px; /* ضمان عدم تداخل العناصر */ }
         th, td { padding: 15px; text-align: right; border-bottom: 1px solid var(--border); }
-        th { background: #222630; color: var(--text-muted); font-weight: 700; }
+        th { background: #222630; color: var(--text-muted); font-weight: 700; white-space: nowrap; }
         tr:hover { background: #222630; }
 
         .btn { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Tajawal'; font-weight: bold; color: white; transition: 0.2s; margin-left: 5px; font-size: 12px;}
@@ -63,9 +66,12 @@
         .btn-del { background: #ef4444; }
         .btn-reset { background: #6b7280; } 
 
+        /* زر القائمة للموبايل */
+        #mobile-menu-btn { display: none; position: fixed; top: 15px; right: 15px; z-index: 10001; background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-size: 20px; cursor: pointer; font-family: 'Tajawal'; }
+
         /* Modal للحضور */
-        #attendance-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: none; align-items: center; justify-content: center; }
-        .att-box { background: var(--card-bg); padding: 30px; border-radius: 15px; text-align: center; width: 350px; border: 1px solid var(--primary); }
+        #attendance-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 10002; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .att-box { background: var(--card-bg); padding: 30px; border-radius: 15px; text-align: center; width: 100%; max-width: 350px; border: 1px solid var(--primary); box-sizing: border-box; }
         .att-btn { display: block; width: 100%; padding: 15px; margin-bottom: 10px; font-size: 16px; font-weight: bold; font-family: 'Tajawal'; border: none; border-radius: 8px; cursor: pointer; color: white;}
 
         details summary { cursor: pointer; color: var(--primary); font-size: 13px; font-weight: bold; margin-top: 8px; outline: none; }
@@ -84,12 +90,31 @@
             .receipt-footer { margin-top: 40px; text-align: center; font-weight: bold; border-top: 1px dashed #000; padding-top: 15px; }
         }
 
-        #loader { position: fixed; inset: 0; background: rgba(11, 13, 17, 0.9); display: none; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; }
+        #loader { position: fixed; inset: 0; background: rgba(11, 13, 17, 0.9); display: none; align-items: center; justify-content: center; z-index: 10005; flex-direction: column; }
         .spinner { border: 4px solid var(--border); border-top: 4px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* ------------------ Media Queries (التجاوب مع الهاتف) ------------------ */
+        @media (max-width: 768px) {
+            #mobile-menu-btn { display: block; }
+            .sidebar { transform: translateX(100%); width: 260px; padding-top: 70px; }
+            .sidebar.show { transform: translateX(0); box-shadow: -5px 0 25px rgba(0,0,0,0.5); }
+            
+            .main-content { margin-right: 0; padding: 20px; padding-top: 70px; }
+            .section-title { font-size: 22px; margin-bottom: 15px; }
+            .admin-card { padding: 20px; }
+            
+            .input-group { grid-template-columns: 1fr; } /* جعل الخانات عمودية */
+            
+            .stats-grid { grid-template-columns: 1fr; } /* مربعات الإحصائيات عمودية */
+            
+            td .btn { margin-bottom: 5px; display: inline-block; } /* تحسين ظهور الأزرار داخل الجدول */
+        }
     </style>
 </head>
 <body>
+
+    <button id="mobile-menu-btn" onclick="toggleSidebar()">☰ القائمة</button>
 
     <div id="login-screen">
         <div class="logo-side" style="margin-bottom: 20px;">
@@ -138,11 +163,11 @@
 
     <div id="loader"><div class="spinner"></div><h3 style="margin-top:15px; color: white;">جاري المزامنة...</h3></div>
 
-    <div class="sidebar">
+    <div class="sidebar" id="app-sidebar">
         <div class="logo-side"><img src="logo.png" alt="REDX Logo" onerror="this.style.display='none'"><div>REDX <span>SCHOOL</span></div></div>
         <div style="flex: 1;">
             <button class="nav-btn active" onclick="switchSec('dashboard', this)">📊 لوحة الإحصائيات</button>
-            <button class="nav-btn" onclick="switchSec('students', this)">👨‍🎓 إدارة التلاميذ (والدفعات)</button>
+            <button class="nav-btn" onclick="switchSec('students', this)">👨‍🎓 إدارة التلاميذ</button>
             <button class="nav-btn" onclick="switchSec('teachers', this)">👨‍🏫 سجل الأساتذة</button>
             <button class="nav-btn" onclick="switchSec('finances', this)">💰 الأرباح والحسابات</button>
         </div>
@@ -160,7 +185,7 @@
             
             <div class="admin-card">
                 <h3 style="margin-top: 0; border-bottom: 1px solid var(--border); padding-bottom: 15px;">توزيع التلاميذ حسب الطور</h3>
-                <div style="display: flex; justify-content: space-around; margin-top: 20px; text-align: center;">
+                <div style="display: flex; justify-content: space-around; margin-top: 20px; text-align: center; flex-wrap: wrap; gap: 15px;">
                     <div><span style="font-size: 30px;">🎒</span><br><b style="font-size: 20px;" id="stat_pri">0</b><br><span style="color: var(--text-muted)">ابتدائي</span></div>
                     <div><span style="font-size: 30px;">🏫</span><br><b style="font-size: 20px;" id="stat_mid">0</b><br><span style="color: var(--text-muted)">متوسط</span></div>
                     <div><span style="font-size: 30px;">🎓</span><br><b style="font-size: 20px;" id="stat_high">0</b><br><span style="color: var(--text-muted)">ثانوي</span></div>
@@ -183,10 +208,12 @@
                 </div>
             </div>
             <input type="text" onkeyup="tableSearch('s_body', this)" placeholder="🔍 ابحث عن تلميذ..." style="width:100%; margin-bottom:20px; padding: 15px;">
-            <table>
-                <thead><tr><th>التلميذ</th><th>المادة والأستاذ</th><th>حالة الحضور</th><th>الشهور المسددة</th><th>إجراءات الإدارة</th></tr></thead>
-                <tbody id="s_body"></tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>التلميذ</th><th>المادة والأستاذ</th><th>حالة الحضور</th><th>الشهور المسددة</th><th>إجراءات الإدارة</th></tr></thead>
+                    <tbody id="s_body"></tbody>
+                </table>
+            </div>
         </div>
 
         <div id="teachers" class="section">
@@ -201,19 +228,23 @@
                     <button class="btn btn-add" onclick="addT()">إضافة أستاذ جديد +</button>
                 </div>
             </div>
-            <table>
-                <thead><tr><th>الأستاذ وقائمة تلاميذه</th><th>الهاتف</th><th>المادة</th><th>السعر/الحصص</th><th>إجراءات</th></tr></thead>
-                <tbody id="t_body"></tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>الأستاذ وقائمة تلاميذه</th><th>الهاتف</th><th>المادة</th><th>السعر/الحصص</th><th>إجراءات</th></tr></thead>
+                    <tbody id="t_body"></tbody>
+                </table>
+            </div>
         </div>
 
         <div id="finances" class="section">
             <h2 class="section-title">الأرباح والحسابات المالية (محدثة بدقة)</h2>
             <div class="admin-card">
-                <table>
-                    <thead><tr><th>الأستاذ والمادة</th><th>المداخيل العادية والإضافية</th><th>النسبة (%)</th><th>للأستاذ (دج)</th><th>للمدرسة (دج)</th></tr></thead>
-                    <tbody id="f_body"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>الأستاذ والمادة</th><th>المداخيل العادية والإضافية</th><th>النسبة (%)</th><th>للأستاذ (دج)</th><th>للمدرسة (دج)</th></tr></thead>
+                        <tbody id="f_body"></tbody>
+                    </table>
+                </div>
                 <div style="background: #222630; padding: 20px; border-radius: 10px; text-align: center; margin-top: 20px; border: 1px dashed var(--primary);">
                     <h3 style="margin: 0; color: white;">إجمالي أرباح المدرسة الصافية: <br><span style="color: var(--success); font-weight: 900; font-size: 32px;" id="total_school_profit">0</span> دج</h3>
                 </div>
@@ -222,6 +253,11 @@
     </div>
 
     <script>
+        // --- نظام فتح واغلاق القائمة في الموبايل ---
+        function toggleSidebar() {
+            document.getElementById('app-sidebar').classList.toggle('show');
+        }
+
         // --- نظام تسجيل الدخول المسترجع ---
         const ADMIN_PASSWORD = "123"; 
 
@@ -245,7 +281,18 @@
 
         function updateYears() { let lvl = v('s_level'), yr = document.getElementById("s_year"), st = document.getElementById("s_stream"); yr.innerHTML = '<option value="" disabled selected>اختر السنة</option>'; st.style.display = 'none'; st.value = ""; if (lvl) { yr.style.display = 'block'; educationData[lvl].forEach(y => yr.innerHTML += `<option value="${y}">${y}</option>`); } }
         function updateStreams() { let lvl = v('s_level'), yr = v('s_year'), st = document.getElementById("s_stream"); if (lvl === "ثانوي" && yr) { st.style.display = 'block'; st.innerHTML = '<option value="" disabled selected>اختر الشعبة</option>'; streamsData[yr].forEach(s => st.innerHTML += `<option value="${s}">${s}</option>`); } else { st.style.display = 'none'; st.value = ""; } }
-        function switchSec(id, btn) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); }
+        
+        function switchSec(id, btn) { 
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); 
+            document.getElementById(id).classList.add('active'); 
+            btn.classList.add('active'); 
+            
+            // اغلاق القائمة تلقائيا في الهاتف عند النقر
+            if(window.innerWidth <= 768) {
+                document.getElementById('app-sidebar').classList.remove('show');
+            }
+        }
 
         async function fetchData() {
             document.getElementById('loader').style.display = 'flex';
@@ -253,13 +300,12 @@
                 let r = await fetch(SCRIPT_URL); 
                 database = await r.json(); 
                 renderAll(); 
-                updateDashboard(); // استدعاء دالة الإحصائيات
+                updateDashboard(); 
             } 
             catch (e) { alert("حدث خطأ في الاتصال"); }
             document.getElementById('loader').style.display = 'none';
         }
 
-        // --- دالة الإحصائيات المسترجعة ---
         function updateDashboard() {
             document.getElementById('stat_students').innerText = database.students.length;
             document.getElementById('stat_teachers').innerText = database.teachers.length;
@@ -282,7 +328,6 @@
             document.getElementById('stat_top_level').innerText = top;
         }
 
-        // --- دوال تسجيل الحضور الذكية ---
         function openAttModal(row, name) {
             currentAttRow = row;
             document.getElementById('att-student-name').innerText = name;
@@ -303,7 +348,6 @@
 
             let sHtml = '', tHtml = '', fHtml = '';
             
-            // رندر التلاميذ مع إضافة زر الطباعة العادي
             database.students.forEach(s => {
                 let teacherData = database.teachers.find(x => x.name === s.teacher && x.subject === s.subject);
                 let teacherMaxSessions = teacherData ? (teacherData.sessions_per_month || 4) : 4;
@@ -331,7 +375,6 @@
                 </tr>`;
             });
 
-            // رندر الأساتذة والأرباح المتقدمة
             database.teachers.forEach((t, i) => {
                 let st = database.students.filter(x => x.teacher === t.name && x.subject === t.subject);
                 let teacherMaxSessions = t.sessions_per_month || 4;
@@ -411,7 +454,6 @@
         function tableSearch(id, inp) { let q=inp.value.toLowerCase(), rows=document.getElementById(id).rows; for(let r of rows) r.style.display=r.innerText.toLowerCase().includes(q)?'':'none'; }
         const v = (id) => document.getElementById(id).value;
         
-        // لا نحمل البيانات تلقائياً، ننتظر تسجيل الدخول أولاً
     </script>
 </body>
 </html>
