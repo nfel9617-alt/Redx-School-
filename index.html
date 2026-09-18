@@ -14,10 +14,10 @@
 
         body { margin: 0; font-family: 'Tajawal', sans-serif; background: var(--dark-bg); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden;}
 
-        /* Login Modal & Director Pass Lock */
+        /* Login Modal & Director Pass Lock & Edit Modals */
         #login-screen, .pass-modal { position: fixed; inset: 0; background: rgba(11,13,17,0.95); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .login-box { background: var(--card-bg); padding: 35px 25px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 100%; max-width: 360px; }
-        .login-box input { margin-bottom: 20px; text-align: center; font-size: 18px; }
+        .login-box input, .login-box select { margin-bottom: 12px; text-align: center; font-size: 15px; }
 
         /* Sidebar & Layout */
         .sidebar { width: 260px; background: var(--card-bg); height: 100vh; position: fixed; border-left: 1px solid var(--border); padding: 25px; box-sizing: border-box; display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s ease; }
@@ -53,6 +53,7 @@
         .btn-add { background: var(--primary); width: 100%; padding: 12px; font-size: 15px; }
         .btn-session { background: var(--success); }
         .btn-pay { background: var(--warning); color: #000; }
+        .btn-edit { background: #3b82f6; }
         .btn-del { background: #ef4444; }
 
         #toast { position: fixed; bottom: 20px; left: 20px; background: var(--success); color: white; padding: 12px 25px; border-radius: 8px; font-weight: bold; z-index: 10005; display: none; animation: fadeIn 0.3s; }
@@ -103,6 +104,57 @@
             <input type="password" id="director_pass" placeholder="كلمة سر المدير..." onkeypress="if(event.key === 'Enter') checkDirectorPass()">
             <button class="btn btn-add" onclick="checkDirectorPass()">فتح المالية 🔑</button>
             <button class="btn" style="background: transparent; color: var(--text-muted); width:100%; margin-top:10px;" onclick="closeDirectorModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل بيانات أستاذ -->
+    <div id="edit-teacher-modal" class="pass-modal" style="display: none;">
+        <div class="login-box" style="max-width: 420px;">
+            <h3 style="margin-top: 0;">تعديل بيانات الأستاذ ✏️</h3>
+            <input type="hidden" id="edit_t_id">
+            <input type="text" id="edit_t_name" placeholder="الاسم واللقب">
+            <input type="text" id="edit_t_phone" placeholder="رقم الهاتف">
+            <input type="text" id="edit_t_sub" placeholder="المادة المدرّسة">
+            <select id="edit_t_lvl">
+                <option value="ابتدائي">ابتدائي</option>
+                <option value="متوسط">متوسط</option>
+                <option value="ثانوي">ثانوي</option>
+            </select>
+            <input type="number" id="edit_t_price" placeholder="السعر الشهري (دج)">
+            <select id="edit_t_sess">
+                <option value="4">4 حصص / شهر</option>
+                <option value="8">8 حصص / شهر</option>
+            </select>
+            <select id="edit_t_gtype">
+                <option value="عادي">فوج عادي</option>
+                <option value="خاص">فوج خاص (VIP)</option>
+            </select>
+            <input type="number" id="edit_t_perc" placeholder="نسبة الأستاذ %">
+            <button class="btn btn-add" style="margin-top:10px;" onclick="saveTeacherEdit()">حفظ التعديلات 💾</button>
+            <button class="btn" style="background: transparent; color: var(--text-muted); width:100%; margin-top:5px;" onclick="closeTeacherEditModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل بيانات تلميذ -->
+    <div id="edit-student-modal" class="pass-modal" style="display: none;">
+        <div class="login-box" style="max-width: 420px;">
+            <h3 style="margin-top: 0;">تعديل بيانات التلميذ ✏️</h3>
+            <input type="hidden" id="edit_s_id">
+            <input type="text" id="edit_s_name" placeholder="الاسم واللقب">
+            <input type="text" id="edit_s_phone" placeholder="رقم الولي">
+            <select id="edit_s_lvl" onchange="updateEditYears()">
+                <option value="ابتدائي">ابتدائي</option>
+                <option value="متوسط">متوسط</option>
+                <option value="ثانوي">ثانوي</option>
+            </select>
+            <select id="edit_s_year" onchange="updateEditStreams()">
+                <option value="" disabled selected>اختر السنة</option>
+            </select>
+            <select id="edit_s_stream" style="display:none;">
+                <option value="" disabled selected>اختر الشعبة</option>
+            </select>
+            <button class="btn btn-add" style="margin-top:10px;" onclick="saveStudentEdit()">حفظ التعديلات 💾</button>
+            <button class="btn" style="background: transparent; color: var(--text-muted); width:100%; margin-top:5px;" onclick="closeStudentEditModal()">إلغاء</button>
         </div>
     </div>
 
@@ -275,8 +327,7 @@
     </div>
 
     <script>
-        // رابط السكريبت الخاص بك المُثبت
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzN1gr4QKNqElhTL2FDfVS7gvK_evJRxWcJy888BOxmljz2k7qVx0av6qJZJ9fk7QqZ/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCo_0eGbXzq6WAcfCFjffp2aWo7RWlUqzv4JjDt_fkfotG258keH1CSTp6_qOvX6CM/exec';
         
         let db = { teachers: [], students: [], expenses: [], archives: [] };
         let selectedStudentId = null;
@@ -300,7 +351,7 @@
             let res = await fetch(SCRIPT_URL, {method:'POST', body: new URLSearchParams({action:'login', password:pass, type})}).then(r=>r.text());
             if(res === "SUCCESS") {
                 document.getElementById('login-screen').style.display = 'none';
-                fetchData();
+                await fetchData();
             } else {
                 document.getElementById('login-error').style.display = 'block';
             }
@@ -340,7 +391,7 @@
                 let res = await fetch(SCRIPT_URL).then(r => r.json());
                 db = res;
                 renderAll();
-                if(showAlert) showToast("تم تحديث البيانات بالكامل!");
+                if(showAlert) showToast("تم تحديث وجلب البيانات بالكامل!");
             } catch(e) { console.error("Error fetching data:", e); }
         }
 
@@ -371,26 +422,34 @@
             document.getElementById('mid_c').innerText = mid;
             document.getElementById('high_c').innerText = high;
 
-            document.getElementById('top_sub').innerText = Object.keys(subs).reduce((a, b) => subs[a] > subs[b] ? a : b, "لا يوجد");
-            document.getElementById('top_stream').innerText = Object.keys(streams).reduce((a, b) => streams[a] > streams[b] ? a : b, "لا يوجد");
+            document.getElementById('top_sub').innerText = Object.keys(subs).length ? Object.keys(subs).reduce((a, b) => subs[a] > subs[b] ? a : b) : "لا يوجد";
+            document.getElementById('top_stream').innerText = Object.keys(streams).length ? Object.keys(streams).reduce((a, b) => streams[a] > streams[b] ? a : b) : "لا يوجد";
         }
 
         function renderTeachers() {
             let filter = document.getElementById('t_filter_lvl').value;
             let html = '', selHtml = '<option value="" disabled selected>اختر الأستاذ والمادة</option>';
             
-            db.teachers.forEach(t => {
+            // الترتيب الأبجدي للأساتذة
+            let sortedTeachers = [...db.teachers].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ar'));
+
+            sortedTeachers.forEach(t => {
                 selHtml += `<option value="${t.id}">${t.name} (${t.subject} - ${t.level})</option>`;
                 if(filter !== 'all' && t.level !== filter) return;
 
-                let stList = db.students.filter(s => s.teacherId === t.id).map(s => `<li>${s.name} (${s.level})</li>`).join('');
+                let stList = db.students.filter(s => s.teacherId === t.id)
+                    .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ar'))
+                    .map(s => `<li>${s.name} (${s.level})</li>`).join('');
 
                 html += `<tr>
                     <td><b>${t.name}</b><br><small>${t.phone}</small><br><details><summary>عرض التلاميذ (${db.students.filter(s => s.teacherId === t.id).length})</summary><ul>${stList||'لا يوجد'}</ul></details></td>
                     <td>${t.subject}<br><span style="color:var(--text-muted); font-size:12px;">${t.level}</span></td>
                     <td><b>${t.price} دج</b><br><small>${t.sessions} حصص/دورة</small></td>
-                    <td><span style="color:var(--warning)">${t.groupType}</span><br><b>${t.percentage}% نسيبة</b></td>
-                    <td><button class="btn btn-del" onclick="deleteItem('Teachers', '${t.id}')">🗑️</button></td>
+                    <td><span style="color:var(--warning)">${t.groupType}</span><br><b>${t.percentage}% نسبة</b></td>
+                    <td>
+                        <button class="btn btn-edit" onclick="openTeacherEditModal('${t.id}')">✏️</button>
+                        <button class="btn btn-del" onclick="deleteItem('Teachers', '${t.id}')">🗑️</button>
+                    </td>
                 </tr>`;
             });
 
@@ -400,7 +459,10 @@
 
         function renderStudents() {
             let html = '';
-            db.students.forEach(s => {
+            // الترتيب الأبجدي للتلاميذ
+            let sortedStudents = [...db.students].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ar'));
+
+            sortedStudents.forEach(s => {
                 let tch = db.teachers.find(t => t.id === s.teacherId);
                 let maxSess = tch ? Number(tch.sessions) : 4;
                 let currentSess = s.regularSessions % maxSess;
@@ -421,6 +483,7 @@
                         <button class="btn btn-session" onclick="openAttModal('${s.id}', '${s.name}')">📝 حضور</button>
                         <button class="btn btn-pay" onclick="payMonth('${s.id}')">💰 تسديد</button>
                         <button class="btn" style="background:var(--border);" title="تصفير الدورة" onclick="resetSess('${s.id}')">🔄</button>
+                        <button class="btn btn-edit" onclick="openStudentEditModal('${s.id}')">✏️</button>
                         <button class="btn btn-del" onclick="deleteItem('Students', '${s.id}')">🗑️</button>
                     </td>
                 </tr>`;
@@ -497,11 +560,11 @@
             let lvl = document.getElementById('s_lvl').value, yr = document.getElementById('s_year').value, st = document.getElementById('s_stream');
             if(lvl === 'ثانوي' && yr) {
                 st.style.display = 'block'; st.innerHTML = '<option value="" disabled selected>اختر الشعبة</option>';
-                streamData[yr].forEach(s => st.innerHTML += `<option value="${s}">${s}</option>`);
+                if(streamData[yr]) streamData[yr].forEach(s => st.innerHTML += `<option value="${s}">${s}</option>`);
             } else st.style.display = 'none';
         }
 
-        // --- المزامنة الفورّية (Optimistic Updates) ---
+        // --- المزامنة وإضافة البيانات ---
         async function addTeacher() {
             let name = val('t_name'), phone = val('t_phone'), subject = val('t_sub'), level = val('t_lvl'), price = val('t_price'), sessions = val('t_sess'), groupType = val('t_gtype'), percentage = val('t_perc') || 50;
             if(!name || !subject || !level) return alert("يرجى ملء البيانات الأساسية للأستاذ!");
@@ -511,7 +574,7 @@
             renderAll();
             showToast("تمت إضافة الأستاذ فوراً ✓");
 
-            fetch(SCRIPT_URL, {method:'POST', body: new URLSearchParams({action:'add_teacher', name, phone, subject, level, price, sessions, groupType, percentage})});
+            fetch(SCRIPT_URL, {method:'POST', body: new URLSearchParams({action:'add_teacher', id:tempId, name, phone, subject, level, price, sessions, groupType, percentage})});
         }
 
         async function addStudent() {
@@ -525,10 +588,109 @@
             showToast("تم إضافة التلميذ بنجاح ✓");
 
             fetch(SCRIPT_URL, {method:'POST', body: new URLSearchParams({
-                action: 'add_student', name, phone, level, year, stream, teacherId: tch.id, teacherName: tch.name, subject: tch.subject, price: tch.price
+                action: 'add_student', id:tempId, name, phone, level, year, stream, teacherId: tch.id, teacherName: tch.name, subject: tch.subject, price: tch.price
             })});
         }
 
+        // --- تعديل الأستاذ والتلميذ ---
+        function openTeacherEditModal(id) {
+            let t = db.teachers.find(item => item.id === id);
+            if (!t) return;
+            document.getElementById('edit_t_id').value = t.id;
+            document.getElementById('edit_t_name').value = t.name || '';
+            document.getElementById('edit_t_phone').value = t.phone || '';
+            document.getElementById('edit_t_sub').value = t.subject || '';
+            document.getElementById('edit_t_lvl').value = t.level || 'ابتدائي';
+            document.getElementById('edit_t_price').value = t.price || '';
+            document.getElementById('edit_t_sess').value = t.sessions || 4;
+            document.getElementById('edit_t_gtype').value = t.groupType || 'عادي';
+            document.getElementById('edit_t_perc').value = t.percentage || 50;
+            document.getElementById('edit-teacher-modal').style.display = 'flex';
+        }
+
+        function closeTeacherEditModal() { document.getElementById('edit-teacher-modal').style.display = 'none'; }
+
+        async function saveTeacherEdit() {
+            let id = val('edit_t_id');
+            let name = val('edit_t_name'), phone = val('edit_t_phone'), subject = val('edit_t_sub'), level = val('edit_t_lvl'), price = val('edit_t_price'), sessions = val('edit_t_sess'), groupType = val('edit_t_gtype'), percentage = val('edit_t_perc');
+            
+            if(!name || !subject || !level) return alert("يرجى ملء البيانات الأساسية!");
+
+            let t = db.teachers.find(item => item.id === id);
+            if(t) {
+                t.name = name; t.phone = phone; t.subject = subject; t.level = level; t.price = price; t.sessions = sessions; t.groupType = groupType; t.percentage = percentage;
+                
+                db.students.forEach(s => {
+                    if(s.teacherId === id) { s.teacherName = name; s.subject = subject; }
+                });
+
+                renderAll();
+                closeTeacherEditModal();
+                showToast("تم تحديث بيانات الأستاذ بنجاح ✓");
+
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: new URLSearchParams({ action: 'edit_teacher', id, name, phone, subject, level, price, sessions, groupType, percentage })
+                });
+            }
+        }
+
+        function openStudentEditModal(id) {
+            let s = db.students.find(item => item.id === id);
+            if (!s) return;
+            document.getElementById('edit_s_id').value = s.id;
+            document.getElementById('edit_s_name').value = s.name || '';
+            document.getElementById('edit_s_phone').value = s.phone || '';
+            document.getElementById('edit_s_lvl').value = s.level || 'ابتدائي';
+            
+            updateEditYears();
+            document.getElementById('edit_s_year').value = s.year || '';
+            
+            updateEditStreams();
+            if (s.stream) document.getElementById('edit_s_stream').value = s.stream;
+
+            document.getElementById('edit-student-modal').style.display = 'flex';
+        }
+
+        function closeStudentEditModal() { document.getElementById('edit-student-modal').style.display = 'none'; }
+
+        function updateEditYears() {
+            let lvl = document.getElementById('edit_s_lvl').value;
+            let yr = document.getElementById('edit_s_year'), st = document.getElementById('edit_s_stream');
+            yr.innerHTML = '<option value="" disabled selected>اختر السنة</option>'; st.style.display = 'none';
+            if(lvl) { yr.style.display = 'block'; eduData[lvl].forEach(y => yr.innerHTML += `<option value="${y}">${y}</option>`); }
+        }
+
+        function updateEditStreams() {
+            let lvl = document.getElementById('edit_s_lvl').value, yr = document.getElementById('edit_s_year').value, st = document.getElementById('edit_s_stream');
+            if(lvl === 'ثانوي' && yr) {
+                st.style.display = 'block'; st.innerHTML = '<option value="" disabled selected>اختر الشعبة</option>';
+                if (streamData[yr]) streamData[yr].forEach(s => st.innerHTML += `<option value="${s}">${s}</option>`);
+            } else st.style.display = 'none';
+        }
+
+        async function saveStudentEdit() {
+            let id = val('edit_s_id');
+            let name = val('edit_s_name'), phone = val('edit_s_phone'), level = val('edit_s_lvl'), year = val('edit_s_year'), stream = val('edit_s_stream') || '';
+            
+            if(!name || !level) return alert("يرجى إدخال اسم التلميذ والطور!");
+
+            let s = db.students.find(item => item.id === id);
+            if(s) {
+                s.name = name; s.phone = phone; s.level = level; s.year = year; s.stream = stream;
+                
+                renderAll();
+                closeStudentEditModal();
+                showToast("تم تحديث بيانات التلميذ بنجاح ✓");
+
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: new URLSearchParams({ action: 'edit_student', id, name, phone, level, year, stream })
+                });
+            }
+        }
+
+        // --- الحضور، التسديد والأرشفة ---
         function openAttModal(id, name) {
             selectedStudentId = id;
             document.getElementById('att-student-name').innerText = name;
@@ -583,7 +745,7 @@
             renderAll();
             showToast("تم تسجيل المصروف ✓");
 
-            fetch(SCRIPT_URL, {method:'POST', body: new URLSearchParams({action:'add_expense', title, amount, category})});
+            fetch(SCRIPT_URL, {method:'POST', body: new URLSearchParams({action:'add_expense', id:tempId, title, amount, category})});
         }
 
         function archiveMonth() {
