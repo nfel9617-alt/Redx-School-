@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REDX SCHOOL - المنصة المتكاملة</title>
+    <meta name="theme-color" content="#e62020">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="REDX SCHOOL">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+
+        :root {
+            --red: #e62020; --red-dark: #c71a1a; --red-soft: #fef1f1; --red-line: #fbd0d0;
+            --ink: #0f1115; --ink-2: #3f4652; --muted: #6b7280; --line: #e6e8ec; --soft: #f6f7f9; --bg: #ffffff;
+            --green: #059669; --green-soft: #e8f8f1; --amber: #b45309; --amber-soft: #fef3c7; --blue: #2563eb; --blue-soft: #eaf1ff;
+            --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.04);
+            --shadow-lg: 0 24px 60px rgba(16,24,40,.22);
+            --radius: 14px;
+        }
+        * { box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
+        body { margin: 0; font-family: 'Tajawal', sans-serif; font-size: 14.5px; line-height: 1.55; background: var(--bg); color: var(--ink); display: flex; min-height: 100vh; overflow-x: hidden; }
+        button, input, select { font-family: inherit; }
+        :focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+        /* ===== الأيقونات ===== */
+        .ic { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; }
+        .ic-lg { width: 22px; height: 22px; }
+        .ic-sm { width: 14px; height: 14px; }
+
+        /* ===== الأزرار ===== */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 15px; border-radius: 10px; border: 1px solid transparent; font-weight: 700; font-size: 13px; cursor: pointer; transition: background .15s, border-color .15s, color .15s, box-shadow .15s; white-space: nowrap; }
+        .btn-primary { background: var(--red); color: #fff; box-shadow: 0 1px 2px rgba(230,32,32,.35); }
+        .btn-primary:hover { background: var(--red-dark); }
+        .btn-ghost { background: #fff; border-color: var(--line); color: var(--ink); }
+        .btn-ghost:hover { background: var(--soft); }
+        .btn-dark { background: var(--ink); color: #fff; }
+        .btn-dark:hover { background: #262a33; }
+        .btn-block { width: 100%; padding: 12px; font-size: 14px; }
+        .btn.sm { padding: 7px 12px; font-size: 12.5px; }
+        .ib { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); background: #fff; color: var(--ink-2); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: .15s; padding: 0; }
+        .ib:hover { background: var(--soft); }
+        .ib-ok:hover { background: var(--green-soft); color: var(--green); border-color: #bfe9d8; }
+        .ib-pay:hover { background: var(--amber-soft); color: var(--amber); border-color: #f6dc9a; }
+        .ib-edit:hover { background: var(--blue-soft); color: var(--blue); border-color: #c7d9fb; }
+        .ib-del:hover { background: var(--red-soft); color: var(--red); border-color: var(--red-line); }
+        .ib-dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+        .ib-dark:hover { background: #262a33; }
+
+        /* ===== الحقول ===== */
+        .f { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; min-width: 0; }
+        .f label { font-size: 12.5px; font-weight: 700; color: var(--ink-2); }
+        input, select { padding: 11px 12px; background: #fff; border: 1px solid #d5d9e0; color: var(--ink); border-radius: 10px; font-size: 14px; width: 100%; outline: none; transition: border-color .15s, box-shadow .15s; }
+        input:focus, select:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(230,32,32,.12); }
+        input::placeholder { color: #9aa1ad; }
+        .fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0 14px; }
+        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+        .search { position: relative; margin-bottom: 16px; }
+        .search .ic { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+        .search input { padding-right: 40px; }
+
+        /* ===== الهيكل ===== */
+        .sidebar { width: 264px; background: #fff; height: 100vh; position: fixed; right: 0; top: 0; border-left: 1px solid var(--line); padding: 22px 16px; display: flex; flex-direction: column; z-index: 1000; transition: transform .28s ease; }
+        .brand { display: flex; align-items: center; gap: 11px; padding: 4px 8px 22px; }
+        .brand-mark { width: 40px; height: 40px; border-radius: 11px; background: var(--red); color: #fff; font-weight: 800; font-size: 16px; display: grid; place-items: center; letter-spacing: .5px; }
+        .brand-name { font-size: 18px; font-weight: 800; line-height: 1.1; }
+        .brand-name span { color: var(--red); }
+        .brand-sub { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+        .nav-btn { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 4px; border-radius: 11px; border: none; background: transparent; color: var(--ink-2); cursor: pointer; font-weight: 700; font-size: 14.5px; text-align: right; transition: .15s; position: relative; }
+        .nav-btn:hover { background: var(--soft); color: var(--ink); }
+        .nav-btn.active { background: var(--red-soft); color: var(--red); }
+        .nav-btn.active::before { content: ''; position: absolute; right: -16px; top: 9px; bottom: 9px; width: 4px; border-radius: 4px 0 0 4px; background: var(--red); }
+        .nav-btn .lock { margin-right: auto; opacity: .5; }
+        .side-foot { display: grid; gap: 8px; }
+        #install-btn { display: none; }
+        .backdrop { display: none; position: fixed; inset: 0; background: rgba(15,17,21,.4); z-index: 999; }
+
+        .main { flex: 1; margin-right: 264px; min-width: 0; width: 100%; }
+        .topbar { position: sticky; top: 0; z-index: 900; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; padding: 14px 32px; }
+        .tb-title { font-size: 20px; font-weight: 800; flex: 1; }
+        .menu-only { display: none; }
+        .bell { position: relative; }
+        .badge { position: absolute; top: -6px; left: -6px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 20px; background: var(--red); color: #fff; font-size: 11px; font-weight: 800; display: none; align-items: center; justify-content: center; border: 2px solid #fff; }
+        .content { padding: 28px 32px 48px; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-bottom: 20px; box-shadow: var(--shadow); }
+        .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+        .card-title { font-size: 16px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 9px; }
+        .card-title .ic { color: var(--red); }
+        .count-pill { background: var(--red); color: #fff; border-radius: 20px; padding: 1px 10px; font-size: 12px; font-weight: 800; }
+
+        /* ===== الإحصائيات ===== */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+        .stat { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow); }
+        .stat-ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; flex: none; background: var(--soft); color: var(--ink-2); }
+        .stat-ic.red { background: var(--red-soft); color: var(--red); }
+        .stat-ic.green { background: var(--green-soft); color: var(--green); }
+        .stat-ic.amber { background: var(--amber-soft); color: var(--amber); }
+        .stat-ic.blue { background: var(--blue-soft); color: var(--blue); }
+        .stat small { display: block; color: var(--muted); font-size: 12.5px; font-weight: 500; }
+        .stat b { font-size: 24px; font-weight: 800; line-height: 1.2; display: block; }
+        .stat b.txt { font-size: 16px; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .level-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+        .level-row span { width: 60px; color: var(--ink-2); font-weight: 700; }
+        .level-row .bar { flex: 1; height: 8px; background: var(--soft); border-radius: 8px; overflow: hidden; }
+        .level-row .bar i { display: block; height: 100%; background: var(--red); border-radius: 8px; }
+        .level-row b { width: 34px; text-align: left; }
+
+        /* ===== الجداول ===== */
+        .table-responsive { width: 100%; overflow-x: auto; border-radius: 12px; border: 1px solid var(--line); }
+        table { width: 100%; border-collapse: collapse; background: #fff; min-width: 700px; }
+        th, td { padding: 13px 16px; text-align: right; border-bottom: 1px solid var(--line); vertical-align: middle; }
+        th { background: var(--soft); color: var(--muted); font-weight: 700; font-size: 12.5px; }
+        tbody tr:hover { background: #fafbfc; }
+        tr:last-child td { border-bottom: none; }
+        .num-red { color: var(--red); font-weight: 800; } .num-green { color: var(--green); font-weight: 800; } .num-amber { color: var(--amber); font-weight: 800; } .num-blue { color: var(--blue); font-weight: 800; }
+        .acts { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        /* ===== بطاقات التلاميذ ===== */
+        .av { width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 16px; flex: none; }
+        .av.red { background: var(--red); }
+        .st-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 14px; overflow: hidden; box-shadow: var(--shadow); }
+        .st-card.has-done { border-color: var(--red-line); }
+        .st-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 18px; background: var(--soft); border-bottom: 1px solid var(--line); }
+        .st-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .st-id .nm { font-size: 16.5px; font-weight: 800; display: block; }
+        .st-id small { color: var(--muted); }
+        .en-row { display: grid; grid-template-columns: 1.3fr 1.4fr 1.7fr 1fr auto; gap: 16px; align-items: center; padding: 15px 18px; border-bottom: 1px solid var(--line); position: relative; }
+        .en-row:last-child { border-bottom: none; }
+        .en-row small { color: var(--muted); }
+        .en-row.done { background: var(--red-soft); }
+        .en-row.done::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 4px; background: var(--red); }
+        .en-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+        .tag { display: inline-flex; align-items: center; gap: 5px; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .tag .ic { width: 13px; height: 13px; }
+        .tag-free { background: var(--green-soft); color: #047857; }
+        .tag-trial { background: var(--amber-soft); color: var(--amber); }
+        .tag-done { background: var(--red); color: #fff; }
+        .tag-unpaid { background: var(--red-soft); color: var(--red); }
+        .tag-paid { background: var(--green-soft); color: #047857; }
+        .prog { height: 6px; background: #e9ebef; border-radius: 6px; overflow: hidden; margin: 7px 0 5px; max-width: 190px; }
+        .prog i { display: block; height: 100%; background: var(--green); border-radius: 6px; }
+        .prog.full i { background: var(--red); }
+        .due { color: var(--red); font-weight: 700; }
+        .empty-note { text-align: center; color: var(--muted); padding: 22px; }
+
+        /* ===== الدورات ===== */
+        .course-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 14px; box-shadow: var(--shadow); }
+        .course-card summary { cursor: pointer; padding: 16px 18px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .course-card summary::-webkit-details-marker { display: none; }
+        .course-card[open] summary { border-bottom: 1px solid var(--line); }
+        .course-body { padding: 6px 18px 18px; }
+        .cs-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 11px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+        .cs-row:last-child { border-bottom: none; }
+        .cs-add { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 14px; align-items: end; }
+        .cs-add > * { margin: 0; }
+
+        /* ===== المودال ===== */
+        .modal { position: fixed; inset: 0; background: rgba(15,17,21,.5); backdrop-filter: blur(3px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 16px; }
+        .modal-card { background: #fff; width: 100%; max-width: 460px; max-height: 92vh; border-radius: 18px; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; overflow: hidden; animation: pop .18s ease-out; }
+        @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+        .modal-head { display: flex; align-items: center; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+        .modal-head .m-ic { width: 38px; height: 38px; border-radius: 11px; background: var(--red-soft); color: var(--red); display: grid; place-items: center; flex: none; }
+        .modal-head h3 { margin: 0; font-size: 17px; font-weight: 800; flex: 1; }
+        .modal-head p { margin: 0; font-size: 12.5px; color: var(--muted); }
+        .modal-x { width: 34px; height: 34px; border-radius: 9px; border: none; background: transparent; color: var(--muted); cursor: pointer; display: grid; place-items: center; }
+        .modal-x:hover { background: var(--soft); color: var(--ink); }
+        .modal-body { padding: 20px 22px 8px; overflow-y: auto; }
+        .modal-foot { display: flex; gap: 10px; padding: 14px 22px 20px; }
+        .modal-foot .btn { flex: 1; padding: 11px; font-size: 14px; }
+        .modal-foot .btn-ghost { flex: 0 0 auto; padding: 11px 20px; }
+        .note-box { background: var(--soft); border-radius: 10px; padding: 11px 13px; font-size: 13px; color: var(--ink-2); margin-bottom: 12px; }
+        .note-box b { color: var(--ink); }
+
+        #login-screen { background: #fff; display: flex; }
+        .auth-card { width: 100%; max-width: 380px; text-align: center; }
+        .auth-card .brand-mark { width: 58px; height: 58px; font-size: 22px; border-radius: 16px; margin: 0 auto 16px; }
+        .auth-card h2 { margin: 0 0 4px; font-size: 24px; font-weight: 800; }
+        .auth-card p { color: var(--muted); margin: 0 0 22px; }
+        .auth-card .f { text-align: right; }
+        .err { color: var(--red); font-size: 13px; margin-top: 12px; display: none; font-weight: 700; }
+
+        .opt { display: flex; align-items: center; gap: 13px; width: 100%; padding: 13px 15px; margin-bottom: 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; cursor: pointer; text-align: right; transition: .15s; }
+        .opt:hover { border-color: var(--red); background: var(--red-soft); }
+        .opt .o-ic { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; flex: none; }
+        .opt b { display: block; font-size: 14.5px; }
+        .opt small { color: var(--muted); font-size: 12.5px; }
+
+        .ni { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+        .ni:last-child { border-bottom: none; }
+        .ni-main { flex: 1; min-width: 150px; }
+        .ni-main b { display: block; }
+        .ni-main small { color: var(--muted); }
+        .ni-act { display: flex; gap: 6px; }
+
+        /* ===== تنبيهات ===== */
+        #toast { position: fixed; bottom: 22px; left: 22px; background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 12px; font-weight: 700; z-index: 10010; display: none; align-items: center; gap: 9px; box-shadow: var(--shadow-lg); }
+        #toast .ic { color: #34d399; }
+        .banner { position: fixed; top: 76px; left: 50%; transform: translateX(-50%); width: calc(100% - 28px); max-width: 520px; z-index: 10005; background: var(--ink); color: #fff; border-radius: 14px; padding: 13px 14px; display: none; align-items: center; gap: 12px; box-shadow: var(--shadow-lg); }
+        .banner .b-ic { width: 36px; height: 36px; border-radius: 10px; background: var(--red); display: grid; place-items: center; flex: none; }
+        .banner .b-txt { flex: 1; font-weight: 700; font-size: 13.5px; line-height: 1.4; }
+        .banner .btn { background: #fff; color: var(--ink); padding: 7px 12px; }
+        .banner .x { background: transparent; border: none; color: #9aa1ad; cursor: pointer; display: grid; place-items: center; padding: 4px; }
+
+        @media print {
+            .sidebar, .topbar, .btn, .ib, .fgrid, #toast, .banner, .backdrop { display: none !important; }
+            .main { margin-right: 0 !important; }
+            .content { padding: 0 !important; }
+            body { color: #000 !important; }
+            .card { box-shadow: none !important; }
+            table, th, td { border: 1px solid #000 !important; color: #000 !important; }
+        }
+
+        @media (max-width: 900px) {
+            .two-col { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(100%); box-shadow: var(--shadow-lg); }
+            .sidebar.show { transform: none; }
+            .backdrop.show { display: block; }
+            .main { margin-right: 0; }
+            .menu-only { display: grid; }
+            .topbar { padding: 12px 14px; }
+            .tb-title { font-size: 18px; }
+            .content { padding: 18px 14px 40px; }
+            .en-row { grid-template-columns: 1fr; gap: 10px; }
+            .en-actions { justify-content: flex-start; }
+            .row2 { grid-template-columns: 1fr; }
+            .banner { top: 66px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- مكتبة الأيقونات (SVG) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+        <symbol id="i-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+        <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+        <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+        <symbol id="i-bookopen" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+        <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></symbol>
+        <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+        <symbol id="i-sync" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+        <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+        <symbol id="i-edit" viewBox="0 0 24 24"><path d="M17 3a2.85 2.85 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+        <symbol id="i-attend" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></symbol>
+        <symbol id="i-cash" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+        <symbol id="i-renew" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+        <symbol id="i-pause" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M10 15V9M14 15V9"/></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><path d="M12 9v4M12 17h.01"/></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+        <symbol id="i-printer" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></symbol>
+        <symbol id="i-archive" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></symbol>
+        <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></symbol>
+        <symbol id="i-flask" viewBox="0 0 24 24"><path d="M10 2v7.31L4.5 19a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.31V2"/><path d="M8.5 2h7"/></symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+        <symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></symbol>
+        <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+        <symbol id="i-badgecheck" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76z"/><path d="m9 12 2 2 4-4"/></symbol>
+        <symbol id="i-trend" viewBox="0 0 24 24"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
+    </svg>
+
+    <div id="toast"><i data-i="check"></i><span id="toast_msg"></span></div>
+    <div class="backdrop" id="backdrop" onclick="toggleSidebar()"></div>
+    <datalist id="students_dl"></datalist>
+
+    <!-- بانر انتهاء الحصص -->
+    <div class="banner" id="notif-banner" role="status">
+        <div class="b-ic"><i data-i="bell"></i></div>
+        <div class="b-txt" id="banner_txt"></div>
+        <button class="btn sm" onclick="hideBanner(); openNotifPanel()">عرض القائمة</button>
+        <button class="x" aria-label="إغلاق" onclick="hideBanner()"><i data-i="x"></i></button>
+    </div>
+
+    <!-- شاشة الدخول -->
+    <div id="login-screen" class="modal" style="display:flex;">
+        <div class="auth-card">
+            <div class="brand-mark">RX</div>
+            <h2>REDX <span style="color:var(--red)">SCHOOL</span></h2>
+            <p>دخول الاستقبال والعمليات</p>
+            <div class="f"><label for="admin_pass">كلمة المرور</label>
+                <input type="password" id="admin_pass" placeholder="أدخل كلمة المرور" onkeypress="if(event.key === 'Enter') checkLogin('reception')"></div>
+            <button class="btn btn-primary btn-block" onclick="checkLogin('reception')"><i data-i="lock"></i> دخول</button>
+            <div class="err" id="login-error">كلمة المرور غير صحيحة</div>
+        </div>
+    </div>
+
+    <!-- قفل المالية -->
+    <div id="director-lock-modal" class="modal">
+        <div class="modal-card" style="max-width:400px;">
+            <div class="modal-head"><div class="m-ic"><i data-i="lock"></i></div><div style="flex:1"><h3>الإدارة والمالية</h3><p>هذا القسم محمي بكلمة سر المدير</p></div><button class="modal-x" aria-label="إغلاق" onclick="closeDirectorModal()"><i data-i="x"></i></button></div>
+            <div class="modal-body">
+                <div class="f"><label for="director_pass">كلمة سر المدير</label><input type="password" id="director_pass" placeholder="أدخل كلمة السر" onkeypress="if(event.key === 'Enter') checkDirectorPass()"></div>
+            </div>
+            <div class="modal-foot"><button class="btn btn-primary" onclick="checkDirectorPass()"><i data-i="lock"></i> فتح المالية</button><button class="btn btn-ghost" onclick="closeDirectorModal()">إلغاء</button></div>
+        </div>
+    </div>
+
+    <!-- تعديل أستاذ -->
+    <div id="edit-teacher-modal" class="modal">
+        <div class="modal-card">
+            <div class="modal-head"><div class="m-ic"><i data-i="edit"></i></div><h3>تعديل بيانات الأستاذ</h3><button class="modal-x" aria-label="إغلاق" onclick="closeModal('edit-teacher-modal')"><i data-i="x"></i></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="edit_t_id">
+                <div class="f"><label>الاسم واللقب</label><input type="text" id="edit_t_name"></div>
+                <div class="row2">
+                    <div class="f"><label>رقم الهاتف</label><input type="text" id="edit_t_phone"></div>
+                    <div class="f"><label>المادة المدرّسة</label><input type="text" id="edit_t_sub"></div>
+                </div>
+                <div class="row2">
+                    <div class="f"><label>الطور</label><select id="edit_t_lvl"><option value="ابتدائي">ابتدائي</option><option value="متوسط">متوسط</option><option value="ثانوي">ثانوي</option></select></div>
+                    <div class="f"><label>السعر الشهري (دج)</label><input type="number" id="edit_t_price"></div>
+                </div>
+                <div class="row2">
+                    <div class="f"><label>الحصص في الشهر</label><select id="edit_t_sess"><option value="4">4 حصص</option><option value="8">8 حصص</option></select></div>
+                    <div class="f"><label>نوع الفوج</label><select id="edit_t_gtype"><option value="عادي">فوج عادي</option><option value="خاص">فوج خاص (VIP)</option></select></div>
+                </div>
+                <div class="f"><label>نسبة الأستاذ %</label><input type="number" id="edit_t_perc"></div>
+            </div>
+            <div class="modal-foot"><button class="btn btn-primary" onclick="saveTeacherEdit()"><i data-i="check"></i> حفظ التعديلات</button><button class="btn btn-ghost" onclick="closeModal('edit-teacher-modal')">إلغاء</button></div>
+        </div>
+    </div>
+
+    <!-- تعديل تلميذ -->
+    <div id="edit-student-modal" class="modal">
+        <div class="modal-card">
+            <div class="modal-head"><div class="m-ic"><i data-i="user"></i></div><h3>تعديل بيانات التلميذ</h3><button class="modal-x" aria-label="إغلاق" onclick="closeModal('edit-student-modal')"><i data-i="x"></i></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="edit_s_id">
+                <div class="f"><label>الاسم واللقب</label><input type="text" id="edit_s_name"></div>
+                <div class="f"><label>رقم الولي</label><input type="text" id="edit_s_phone"></div>
+                <div class="f"><label>الطور</label><select id="edit_s_lvl" onchange="updateEditYears()"><option value="ابتدائي">ابتدائي</option><option value="متوسط">متوسط</option><option value="ثانوي">ثانوي</option></select></div>
+                <div class="row2">
+                    <div class="f"><label>السنة</label><select id="edit_s_year" onchange="updateEditStreams()"><option value="" disabled selected>اختر السنة</option></select></div>
+                    <div class="f"><label>الشعبة</label><select id="edit_s_stream" disabled><option value="" disabled selected>—</option></select></div>
+                </div>
+                <div id="edit_s_enlist"></div>
+                <button class="btn btn-dark btn-block" style="margin-bottom:12px;" onclick="addEnrollmentFromEdit()"><i data-i="plus"></i> إضافة تسجيل آخر (مادة أو أستاذ جديد)</button>
+            </div>
+            <div class="modal-foot"><button class="btn btn-primary" onclick="saveStudentEdit()"><i data-i="check"></i> حفظ التعديلات</button><button class="btn btn-ghost" onclick="closeModal('edit-student-modal')">إلغاء</button></div>
+        </div>
+    </div>
+
+    <!-- إضافة / تعديل تسجيل -->
+    <div id="enrollment-modal" class="modal">
+        <div class="modal-card">
+            <div class="modal-head"><div class="m-ic"><i data-i="layers"></i></div><div style="flex:1"><h3 id="en_title">تسجيل جديد</h3><p id="en_student_name"></p></div><button class="modal-x" aria-label="إغلاق" onclick="closeModal('enrollment-modal')"><i data-i="x"></i></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="en_id"><input type="hidden" id="en_sid"><input type="hidden" id="en_mode">
+                <div class="f"><label>الأستاذ والمادة</label><select id="en_teacher" onchange="fillFromTeacher('en_teacher','en_sess','en_gtype','en_price')"></select></div>
+                <div class="f"><label>الحالة</label>
+                    <select id="en_status">
+                        <option value="عادي">عادي (يدفع)</option>
+                        <option value="مجاني">مجاني (لا يدفع)</option>
+                        <option value="تجريبي">تجريبي (مجمّد، حصة أو حصتان)</option>
+                    </select></div>
+                <div class="row2">
+                    <div class="f"><label>السعر الشهري (دج)</label><input type="number" id="en_price"></div>
+                    <div class="f"><label>عدد الحصص في الدورة</label><input type="number" id="en_sess" min="1"></div>
+                </div>
+                <div class="row2">
+                    <div class="f"><label>نوع الفوج</label><select id="en_gtype"><option value="عادي">فوج عادي</option><option value="خاص">فوج خاص (VIP)</option></select></div>
+                    <div class="f"><label>تاريخ بداية الاشتراك</label><input type="date" id="en_start"></div>
+                </div>
+            </div>
+            <div class="modal-foot"><button class="btn btn-primary" onclick="saveEnrollment()"><i data-i="check"></i> حفظ</button><button class="btn btn-ghost" onclick="closeModal('enrollment-modal')">إلغاء</button></div>
+        </div>
+    </div>
+
+    <!-- تعديل دورة -->
+    <div id="edit-course-modal" class="modal">
+        <div class="modal-card">
+            <div class="modal-head"><div class="m-ic"><i data-i="bookopen"></i></div><h3>تعديل الدورة</h3><button class="modal-x" aria-label="إغلاق" onclick="closeModal('edit-course-modal')"><i data-i="x"></i></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="edit_c_id">
+                <div class="row2">
+                    <div class="f"><label>اسم الأستاذ</label><input type="text" id="edit_c_teacher"></div>
+                    <div class="f"><label>المادة / عنوان الدورة</label><input type="text" id="edit_c_subject"></div>
+                </div>
+                <div class="row2">
+                    <div class="f"><label>سعر الدورة (دج)</label><input type="number" id="edit_c_price"></div>
+                    <div class="f"><label>التاريخ</label><input type="date" id="edit_c_date"></div>
+                </div>
+                <div class="f"><label>نسبة الأستاذ %</label><input type="number" id="edit_c_perc"></div>
+            </div>
+            <div class="modal-foot"><button class="btn btn-primary" onclick="saveCourseEdit()"><i data-i="check"></i> حفظ التعديلات</button><button class="btn btn-ghost" onclick="closeModal('edit-course-modal')">إلغاء</button></div>
+        </div>
+    </div>
+
+    <!-- تسجيل الحضور -->
+    <div id="attendance-modal" class="modal">
+        <div class="modal-card" style="max-width:420px;">
+            <div class="modal-head"><div class="m-ic"><i data-i="attend"></i></div><div style="flex:1"><h3>تسجيل حضور</h3><p id="att-student-name"></p></div><button class="modal-x" aria-label="إغلاق" onclick="closeModal('attendance-modal')"><i data-i="x"></i></button></div>
+            <div class="modal-body" id="att-buttons"></div>
+            <div class="modal-foot"><button class="btn btn-ghost" style="flex:1" onclick="closeModal('attendance-modal')">إلغاء</button></div>
+        </div>
+    </div>
+
+    <!-- إشعارات انتهاء الحصص -->
+    <div id="notif-modal" class="modal">
+        <div class="modal-card" style="max-width:540px;">
+            <div class="modal-head"><div class="m-ic"><i data-i="bell"></i></div><div style="flex:1"><h3>انتهت حصصهم</h3><p id="notif_sub"></p></div><button class="modal-x" aria-label="إغلاق" onclick="closeModal('notif-modal')"><i data-i="x"></i></button></div>
+            <div class="modal-body" id="notif_list"></div>
+            <div class="modal-foot" id="notif_foot"><button class="btn btn-ghost" style="flex:1" onclick="closeModal('notif-modal')">إغلاق</button></div>
+        </div>
+    </div>
+
+    <!-- الشريط الجانبي -->
+    <aside class="sidebar" id="app-sidebar">
+        <div class="brand">
+            <div class="brand-mark">RX</div>
+            <div><div class="brand-name">REDX <span>SCHOOL</span></div><div class="brand-sub">منصة تسيير المدرسة</div></div>
+        </div>
+        <nav style="flex:1;">
+            <button class="nav-btn active" data-sec="dashboard" data-title="الإحصائيات" onclick="switchSec('dashboard', this)"><i data-i="dashboard"></i> الإحصائيات</button>
+            <button class="nav-btn" data-sec="teachers" data-title="الأساتذة والأفواج" onclick="switchSec('teachers', this)"><i data-i="users"></i> الأساتذة</button>
+            <button class="nav-btn" data-sec="students" data-title="التلاميذ والحضور" onclick="switchSec('students', this)"><i data-i="cap"></i> التلاميذ</button>
+            <button class="nav-btn" data-sec="courses" data-title="الدورات المؤقتة" onclick="switchSec('courses', this)"><i data-i="bookopen"></i> الدورات</button>
+            <button class="nav-btn" data-sec="finances" data-title="الإدارة والمالية" onclick="tryAccessFinances(this)"><i data-i="wallet"></i> الإدارة والمالية <span class="lock"><i data-i="lock"></i></span></button>
+        </nav>
+        <div class="side-foot">
+            <button id="install-btn" class="btn btn-dark btn-block" onclick="installApp()"><i data-i="download"></i> تثبيت التطبيق</button>
+            <button class="btn btn-ghost btn-block" onclick="fetchData(true)"><i data-i="sync"></i> مزامنة شاملة</button>
+        </div>
+    </aside>
+
+    <!-- المحتوى -->
+    <div class="main">
+        <header class="topbar">
+            <button class="ib menu-only" aria-label="القائمة" onclick="toggleSidebar()"><i data-i="menu"></i></button>
+            <div class="tb-title" id="tb_title">الإحصائيات</div>
+            <button class="ib bell" aria-label="الإشعارات" onclick="openNotifPanel()"><i data-i="bell"></i><span class="badge" id="bell_badge">0</span></button>
+        </header>
+
+        <div class="content">
+
+            <!-- الإحصائيات -->
+            <div id="dashboard" class="section active">
+                <div class="stats-grid">
+                    <div class="stat"><div class="stat-ic red"><i data-i="cap" class="ic-lg"></i></div><div><small>التلاميذ</small><b id="st_count">0</b></div></div>
+                    <div class="stat"><div class="stat-ic blue"><i data-i="layers" class="ic-lg"></i></div><div><small>التسجيلات (مواد)</small><b id="en_count">0</b></div></div>
+                    <div class="stat"><div class="stat-ic"><i data-i="users" class="ic-lg"></i></div><div><small>الأساتذة</small><b id="tc_count">0</b></div></div>
+                    <div class="stat"><div class="stat-ic green"><i data-i="gift" class="ic-lg"></i></div><div><small>تسجيلات مجانية</small><b id="free_count">0</b></div></div>
+                    <div class="stat"><div class="stat-ic amber"><i data-i="flask" class="ic-lg"></i></div><div><small>تسجيلات تجريبية</small><b id="trial_count">0</b></div></div>
+                    <div class="stat"><div class="stat-ic red"><i data-i="bell" class="ic-lg"></i></div><div><small>انتهت حصصهم</small><b id="done_count">0</b></div></div>
+                    <div class="stat"><div class="stat-ic"><i data-i="bookopen" class="ic-lg"></i></div><div><small>الدورات</small><b id="course_count">0</b></div></div>
+                    <div class="stat"><div class="stat-ic red"><i data-i="trend" class="ic-lg"></i></div><div><small>المادة الأكثر تسجيلاً</small><b class="txt" id="top_sub">...</b></div></div>
+                    <div class="stat"><div class="stat-ic amber"><i data-i="badgecheck" class="ic-lg"></i></div><div><small>أكثر شعبة بباكلوريا</small><b class="txt" id="top_stream">...</b></div></div>
+                </div>
+
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-head"><h3 class="card-title"><i data-i="alert"></i> انتهت حصصهم <span class="count-pill" id="done_pill">0</span></h3></div>
+                        <div id="done_dash"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head"><h3 class="card-title"><i data-i="clock"></i> اشتراكات حان موعد تجديدها</h3></div>
+                        <div id="dues_list"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title"><i data-i="cap"></i> توزيع التلاميذ حسب الطور</h3></div>
+                    <div id="levels_box"></div>
+                </div>
+            </div>
+
+            <!-- الأساتذة -->
+            <div id="teachers" class="section">
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title"><i data-i="plus"></i> تسجيل أستاذ جديد</h3></div>
+                    <div class="fgrid">
+                        <div class="f"><label>الاسم واللقب</label><input type="text" id="t_name" placeholder="مثال: أحمد بن علي"></div>
+                        <div class="f"><label>رقم الهاتف</label><input type="text" id="t_phone" placeholder="05..."></div>
+                        <div class="f"><label>المادة المدرّسة</label><input type="text" id="t_sub" placeholder="مثال: رياضيات"></div>
+                        <div class="f"><label>الطور</label>
+                            <select id="t_lvl"><option value="" disabled selected>اختر الطور</option><option value="ابتدائي">ابتدائي</option><option value="متوسط">متوسط</option><option value="ثانوي">ثانوي</option></select></div>
+                        <div class="f"><label>السعر الشهري (دج)</label><input type="number" id="t_price" placeholder="0"></div>
+                        <div class="f"><label>الحصص في الشهر</label><select id="t_sess"><option value="4">4 حصص</option><option value="8">8 حصص</option></select></div>
+                        <div class="f"><label>نوع الفوج</label><select id="t_gtype"><option value="عادي">فوج عادي</option><option value="خاص">فوج خاص (VIP)</option></select></div>
+                        <div class="f"><label>نسبة الأستاذ %</label><input type="number" id="t_perc" placeholder="50"></div>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="addTeacher()"><i data-i="plus"></i> تسجيل الأستاذ</button>
+                </div>
+
+                <div style="margin-bottom:14px; max-width:220px;">
+                    <select id="t_filter_lvl" onchange="renderTeachers()">
+                        <option value="all">كل الأطوار</option><option value="ابتدائي">ابتدائي</option><option value="متوسط">متوسط</option><option value="ثانوي">ثانوي</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>الأستاذ والقائمة</th><th>الطور والمادة</th><th>السعر والحصص</th><th>الفوج والنسبة</th><th>إجراءات</th></tr></thead>
+                        <tbody id="t_table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- التلاميذ -->
+            <div id="students" class="section">
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title"><i data-i="plus"></i> تسجيل تلميذ جديد</h3></div>
+                    <div class="fgrid">
+                        <div class="f"><label>الاسم واللقب</label><input type="text" id="s_name" list="students_dl" placeholder="اسم التلميذ"></div>
+                        <div class="f"><label>رقم الولي</label><input type="text" id="s_phone" placeholder="05..."></div>
+                        <div class="f"><label>الطور</label><select id="s_lvl" onchange="updateYears()"><option value="" disabled selected>اختر الطور</option><option value="ابتدائي">ابتدائي</option><option value="متوسط">متوسط</option><option value="ثانوي">ثانوي</option></select></div>
+                        <div class="f"><label>السنة</label><select id="s_year" onchange="updateStreams()" disabled><option value="" disabled selected>اختر الطور أولاً</option></select></div>
+                        <div class="f"><label>الشعبة</label><select id="s_stream" disabled><option value="" disabled selected>—</option></select></div>
+                    </div>
+                    <div class="fgrid">
+                        <div class="f"><label>الأستاذ والمادة</label><select id="s_teacher" onchange="fillFromTeacher('s_teacher','s_sess','s_gtype',null)"></select></div>
+                        <div class="f"><label>الحالة</label>
+                            <select id="s_status">
+                                <option value="عادي">عادي (يدفع)</option>
+                                <option value="مجاني">مجاني (لا يدفع)</option>
+                                <option value="تجريبي">تجريبي (مجمّد)</option>
+                            </select></div>
+                        <div class="f"><label>تاريخ التسجيل</label><input type="date" id="s_start"></div>
+                        <div class="f"><label>عدد الحصص في الدورة</label><input type="number" id="s_sess" min="1" value="4"></div>
+                        <div class="f"><label>نوع الفوج</label><select id="s_gtype"><option value="عادي">فوج عادي</option><option value="خاص">فوج خاص (VIP)</option></select></div>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="addStudent()"><i data-i="plus"></i> تأكيد التسجيل</button>
+                </div>
+
+                <div class="search"><i data-i="search"></i><input type="text" id="s_search" oninput="renderStudents()" placeholder="بحث سريع: اسم، هاتف، مادة، أستاذ"></div>
+                <div id="s_list"></div>
+            </div>
+
+            <!-- الدورات -->
+            <div id="courses" class="section">
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title"><i data-i="plus"></i> تسجيل دورة جديدة</h3></div>
+                    <div class="fgrid">
+                        <div class="f"><label>اسم الأستاذ</label><input type="text" id="c_teacher" placeholder="الأستاذ المحاضر"></div>
+                        <div class="f"><label>المادة / عنوان الدورة</label><input type="text" id="c_subject" placeholder="مثال: دورة مكثفة في الفيزياء"></div>
+                        <div class="f"><label>سعر الدورة (دج)</label><input type="number" id="c_price" placeholder="0"></div>
+                        <div class="f"><label>التاريخ</label><input type="date" id="c_date"></div>
+                        <div class="f"><label>نسبة الأستاذ %</label><input type="number" id="c_perc" placeholder="50"></div>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="addCourse()"><i data-i="plus"></i> تسجيل الدورة</button>
+                </div>
+                <div id="c_list"></div>
+            </div>
+
+            <!-- المالية -->
+            <div id="finances" class="section">
+                <div class="card-head">
+                    <div></div>
+                    <div class="acts">
+                        <button class="btn btn-ghost" onclick="window.print()"><i data-i="printer"></i> طباعة التقرير</button>
+                        <button class="btn btn-dark" onclick="archiveMonth()"><i data-i="archive"></i> إغلاق وأرشفة الشهر</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title"><i data-i="users"></i> تصفية مستحقات الأساتذة وحق المؤسسة</h3></div>
+                    <div class="table-responsive"><table>
+                        <thead><tr><th>الأستاذ والمادة</th><th>المداخيل الإجمالية</th><th>النسبة</th><th>مستحق الأستاذ</th><th>حق المؤسسة</th></tr></thead>
+                        <tbody id="f_table"></tbody>
+                    </table></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title"><i data-i="bookopen"></i> مداخيل الدورات</h3></div>
+                    <div class="table-responsive"><table>
+                        <thead><tr><th>الدورة</th><th>الدافعون</th><th>المحصّل</th><th>مستحق الأستاذ</th><th>حق المؤسسة</th></tr></thead>
+                        <tbody id="c_fin_table"></tbody>
+                    </table></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title"><i data-i="cash"></i> مصاريف المؤسسة (كراء، كهرباء، صيانة)</h3></div>
+                    <div class="fgrid">
+                        <div class="f"><label>بيان المصروف</label><input type="text" id="e_title" placeholder="مثال: كراء شهر نوفمبر"></div>
+                        <div class="f"><label>المبلغ (دج)</label><input type="number" id="e_amount" placeholder="0"></div>
+                        <div class="f"><label>الفئة</label><select id="e_cat"><option value="كراء">كراء</option><option value="كهرباء وماء">كهرباء وماء</option><option value="تجهيزات وورق">تجهيزات وورق</option><option value="مصاريف أخرى">مصاريف أخرى</option></select></div>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="addExpense()"><i data-i="plus"></i> إضافة مصروف</button>
+                    <div class="table-responsive" style="margin-top:16px;"><table>
+                        <thead><tr><th>البيان</th><th>الفئة</th><th>التاريخ</th><th>المبلغ</th><th>حذف</th></tr></thead>
+                        <tbody id="e_table"></tbody>
+                    </table></div>
+                </div>
+
+                <div class="card" style="text-align:center; border:2px solid var(--red-line); background:var(--red-soft);">
+                    <div style="color:var(--ink-2); font-weight:700;">صافي أرباح المؤسسة</div>
+                    <div style="margin-top:6px;"><span id="net_profit" style="font-size:42px; font-weight:800; color:var(--green);">0</span> <span style="font-weight:700;">دج</span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCo_0eGbXzq6WAcfCFjffp2aWo7RWlUqzv4JjDt_fkfotG258keH1CSTp6_qOvX6CM/exec';
+
+        let db = { teachers: [], students: [], enrollments: [], expenses: [], archives: [], courses: [], courseStudents: [] };
+        let selectedEnId = null;
+        let isDirectorAuthenticated = false;
+        let knownFinished = null;
+        let bannerTimer = null;
+        const openCourses = new Set();
+
+        const eduData = { "ابتدائي": ["الأولى", "الثانية", "الثالثة", "الرابعة", "الخامسة"], "متوسط": ["الأولى", "الثانية", "الثالثة", "الرابعة"], "ثانوي": ["الأولى", "الثانية", "الثالثة"] };
+        const streamData = {
+            "الأولى": ["جذع مشترك علوم", "جذع مشترك آداب"],
+            "الثانية": ["علوم تجريبية", "رياضيات", "شعبة هندسة", "تسيير واقتصاد", "آداب وفلسفة", "لغات أجنبية"],
+            "الثالثة": ["علوم تجريبية", "رياضيات", "شعبة هندسة", "تسيير واقتصاد", "آداب وفلسفة", "لغات أجنبية"]
+        };
+
+        // ---------- أدوات ----------
+        const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+        function hydrateIcons(root = document) {
+            root.querySelectorAll('i[data-i]').forEach(el => { el.outerHTML = ic(el.dataset.i, el.className); });
+        }
+        const val = id => document.getElementById(id).value;
+        const setVal = (id, v) => { document.getElementById(id).value = v; };
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const post = (action, obj = {}) => fetch(SCRIPT_URL, { method: 'POST', body: new URLSearchParams({ action, ...obj }) });
+        const rnd = (p, a, b) => p + Math.floor(a + Math.random() * b);
+        const initial = n => (String(n || '?').trim()[0] || '?');
+
+        const pad = n => String(n).padStart(2, '0');
+        const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+        const parseISO = s => { const [y, m, d] = String(s).slice(0, 10).split('-').map(Number); return new Date(y, m - 1, d); };
+        const todayISO = () => iso(new Date());
+        const fmtLong = d => d.toLocaleDateString('ar-DZ-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long' });
+        const fmtShort = d => d.toLocaleDateString('ar-DZ-u-nu-latn', { day: 'numeric', month: 'long' });
+        const monthName = s => parseISO(s || todayISO()).toLocaleDateString('ar-DZ-u-nu-latn', { month: 'long' });
+
+        function addMonthISO(s) {
+            const d = parseISO(s);
+            const lastDay = new Date(d.getFullYear(), d.getMonth() + 2, 0).getDate();
+            return iso(new Date(d.getFullYear(), d.getMonth() + 1, Math.min(d.getDate(), lastDay)));
+        }
+        function cycleInfo(en) {
+            if (!en.startDate) return null;
+            const start = parseISO(en.startDate);
+            const end = parseISO(addMonthISO(en.startDate));
+            const next = new Date(end);
+            while (next.getDay() !== start.getDay()) next.setDate(next.getDate() + 1);
+            return { start, end, next, due: parseISO(todayISO()) >= end };
+        }
+
+        // انتهاء الحصص: اكتمل عدد حصص الدورة (التجريبي مستثنى)
+        const maxOf = e => Number(e.sessions) || 4;
+        const isComplete = e => e.status !== 'تجريبي' && e.regularSessions > 0 && e.regularSessions % maxOf(e) === 0;
+        const studentOf = e => db.students.find(x => x.id === e.studentId);
+        function getFinished() {
+            return db.enrollments.filter(isComplete).map(e => ({ e, s: studentOf(e) })).filter(x => x.s)
+                .sort((a, b) => (a.s.name || '').localeCompare(b.s.name || '', 'ar'));
+        }
+
+        function toggleSidebar() {
+            document.getElementById('app-sidebar').classList.toggle('show');
+            document.getElementById('backdrop').classList.toggle('show');
+        }
+        function showToast(msg = "تمت العملية بنجاح") {
+            const t = document.getElementById('toast');
+            document.getElementById('toast_msg').innerText = msg;
+            t.style.display = 'flex';
+            clearTimeout(showToast._t);
+            showToast._t = setTimeout(() => t.style.display = 'none', 2500);
+        }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(m => { if (m.id !== 'login-screen') m.style.display = 'none'; });
+        });
+
+        // ---------- الدخول ----------
+        async function checkLogin(type) {
+            const pass = val('admin_pass');
+            const res = await fetch(SCRIPT_URL, { method: 'POST', body: new URLSearchParams({ action: 'login', password: pass, type }) }).then(r => r.text());
+            if (res === "SUCCESS") {
+                document.getElementById('login-screen').style.display = 'none';
+                await fetchData();
+            } else document.getElementById('login-error').style.display = 'block';
+        }
+        function tryAccessFinances(btn) {
+            if (isDirectorAuthenticated) switchSec('finances', btn);
+            else { openModal('director-lock-modal'); setTimeout(() => document.getElementById('director_pass').focus(), 50); }
+        }
+        async function checkDirectorPass() {
+            const pass = val('director_pass');
+            const res = await fetch(SCRIPT_URL, { method: 'POST', body: new URLSearchParams({ action: 'login', password: pass, type: 'director' }) }).then(r => r.text());
+            if (res === "SUCCESS") {
+                isDirectorAuthenticated = true;
+                closeDirectorModal();
+                switchSec('finances', document.querySelector('[data-sec="finances"]'));
+            } else alert("كلمة سر المدير غير صحيحة");
+        }
+        function closeDirectorModal() { closeModal('director-lock-modal'); setVal('director_pass', ''); }
+
+        function switchSec(id, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+            document.getElementById('tb_title').innerText = btn.dataset.title || '';
+            if (window.innerWidth <= 768) {
+                document.getElementById('app-sidebar').classList.remove('show');
+                document.getElementById('backdrop').classList.remove('show');
+            }
+            window.scrollTo(0, 0);
+        }
+
+        async function fetchData(showAlert = false) {
+            try {
+                const res = await fetch(SCRIPT_URL).then(r => r.json());
+                db = Object.assign({ teachers: [], students: [], enrollments: [], expenses: [], archives: [], courses: [], courseStudents: [] }, res);
+                renderAll();
+                if (showAlert) showToast("تم تحديث البيانات بالكامل");
+            } catch (e) { console.error("Error fetching data:", e); }
+        }
+
+        function renderAll() {
+            renderDashboard(); renderTeachers(); renderStudents(); renderCourses(); renderFinances(); renderNotifications();
+            document.getElementById('students_dl').innerHTML = db.students.map(s => `<option value="${esc(s.name)}">`).join('');
+        }
+
+        // ---------- الإشعارات ----------
+        function finishedRow(x, withActions = true) {
+            const { e, s } = x;
+            return `<div class="ni">
+                <div class="av red">${esc(initial(s.name))}</div>
+                <div class="ni-main"><b>${esc(s.name)}</b><small>${esc(e.subject)} · ${esc(e.teacherName)} · اكتملت ${maxOf(e)}/${maxOf(e)} حصص</small></div>
+                ${withActions ? `<div class="ni-act">
+                    <button class="btn btn-ghost sm" onclick="viewStudent('${s.id}')">${ic('user', 'ic-sm')} عرض</button>
+                    <button class="btn btn-primary sm" onclick="newCycle('${e.id}')">${ic('renew', 'ic-sm')} دورة جديدة</button>
+                </div>` : ''}
+            </div>`;
+        }
+
+        function renderNotifications() {
+            const list = getFinished();
+            const n = list.length;
+            const badge = document.getElementById('bell_badge');
+            badge.innerText = n; badge.style.display = n ? 'flex' : 'none';
+            document.getElementById('done_count').innerText = n;
+            document.getElementById('done_pill').innerText = n;
+
+            document.getElementById('done_dash').innerHTML = n ? list.map(x => finishedRow(x, false)).join('') : '<div class="empty-note">لا يوجد تلاميذ انتهت حصصهم</div>';
+            document.getElementById('notif_sub').innerText = n ? `${n} تسجيل يحتاج إلى دورة جديدة` : 'لا توجد إشعارات حالياً';
+            document.getElementById('notif_list').innerHTML = n ? list.map(x => finishedRow(x, true)).join('') : '<div class="empty-note">لا يوجد تلاميذ انتهت حصصهم</div>';
+
+            // زر تفعيل إشعارات الجهاز
+            let foot = '';
+            if ('Notification' in window && Notification.permission === 'default')
+                foot += `<button class="btn btn-dark" onclick="enableDeviceNotifications()">${ic('bell', 'ic-sm')} تفعيل إشعارات الجهاز</button>`;
+            foot += `<button class="btn btn-ghost" style="flex:${foot ? '0 0 auto' : '1'}" onclick="closeModal('notif-modal')">إغلاق</button>`;
+            document.getElementById('notif_foot').innerHTML = foot;
+
+            const ids = new Set(list.map(x => x.e.id));
+            if (knownFinished === null) {
+                if (n) showBanner(list, false);
+            } else {
+                const fresh = list.filter(x => !knownFinished.has(x.e.id));
+                if (fresh.length) showBanner(fresh, true);
+            }
+            knownFinished = ids;
+            deviceNotify(list);
+        }
+
+        function showBanner(items, isNew) {
+            const names = items.map(x => x.s.name);
+            const txt = isNew
+                ? (names.length <= 2 ? `انتهت حصص: ${names.join(' و ')}` : `انتهت حصص ${names.length} تلاميذ جدد`)
+                : (names.length <= 2 ? `انتهت حصص: ${names.join(' و ')}` : `انتهت حصص ${names.length} تلاميذ، راجع القائمة`);
+            document.getElementById('banner_txt').innerText = txt;
+            document.getElementById('notif-banner').style.display = 'flex';
+            clearTimeout(bannerTimer);
+            bannerTimer = setTimeout(hideBanner, 9000);
+        }
+        function hideBanner() { document.getElementById('notif-banner').style.display = 'none'; }
+        function openNotifPanel() { renderNotifications(); openModal('notif-modal'); }
+
+        function viewStudent(id) {
+            const s = db.students.find(x => x.id === id); if (!s) return;
+            closeModal('notif-modal');
+            setVal('s_search', s.name);
+            switchSec('students', document.querySelector('[data-sec="students"]'));
+            renderStudents();
+        }
+
+        async function enableDeviceNotifications() {
+            try { await Notification.requestPermission(); } catch (e) { }
+            renderNotifications();
+        }
+        async function deviceNotify(list) {
+            try {
+                if (!('Notification' in window) || Notification.permission !== 'granted') return;
+                const stored = new Set((localStorage.getItem('redx_notified') || '').split(',').filter(Boolean));
+                const fresh = list.filter(x => !stored.has(x.e.id));
+                localStorage.setItem('redx_notified', list.map(x => x.e.id).join(','));
+                if (!fresh.length) return;
+                const body = fresh.length <= 3 ? fresh.map(x => x.s.name).join('، ') : `${fresh.length} تلاميذ`;
+                const opts = { body: 'انتهت حصص: ' + body, icon: 'icon-192.png', tag: 'redx-finished' };
+                const reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
+                if (reg && reg.showNotification) reg.showNotification('REDX SCHOOL', opts);
+                else new Notification('REDX SCHOOL', opts);
+            } catch (e) { }
+        }
+
+        // ---------- الإحصائيات ----------
+        function renderDashboard() {
+            const set = (id, v) => document.getElementById(id).innerText = v;
+            set('st_count', db.students.length);
+            set('tc_count', db.teachers.length);
+            set('en_count', db.enrollments.length);
+            set('free_count', db.enrollments.filter(e => e.status === 'مجاني').length);
+            set('trial_count', db.enrollments.filter(e => e.status === 'تجريبي').length);
+            set('course_count', db.courses.length);
+
+            let lv = { 'ابتدائي': 0, 'متوسط': 0, 'ثانوي': 0 }, subs = {}, streams = {};
+            db.students.forEach(s => {
+                Object.keys(lv).forEach(k => { if (String(s.level).includes(k)) lv[k]++; });
+                if (s.stream) streams[s.stream] = (streams[s.stream] || 0) + 1;
+            });
+            db.enrollments.forEach(e => { if (e.subject) subs[e.subject] = (subs[e.subject] || 0) + 1; });
+            const top = o => Object.keys(o).length ? Object.keys(o).reduce((a, b) => o[a] > o[b] ? a : b) : "لا يوجد";
+            set('top_sub', top(subs)); set('top_stream', top(streams));
+
+            const total = db.students.length || 1;
+            document.getElementById('levels_box').innerHTML = Object.keys(lv).map(k =>
+                `<div class="level-row"><span>${k}</span><div class="bar"><i style="width:${Math.round(lv[k] / total * 100)}%"></i></div><b>${lv[k]}</b></div>`).join('');
+
+            const dues = db.enrollments.filter(e => e.status === 'عادي').map(e => ({ e, ci: cycleInfo(e) })).filter(x => x.ci && x.ci.due);
+            document.getElementById('dues_list').innerHTML = dues.length ? dues.map(({ e, ci }) => {
+                const s = studentOf(e);
+                return `<div class="ni"><div class="av">${esc(initial(s ? s.name : ''))}</div><div class="ni-main"><b>${esc(s ? s.name : '—')}</b><small>${esc(e.subject)} · انتهى ${fmtShort(ci.end)}</small></div><span class="due">الدورة الجديدة ${fmtLong(ci.next)}</span></div>`;
+            }).join('') : '<div class="empty-note">لا توجد اشتراكات منتهية</div>';
+        }
+
+        // ---------- الأساتذة ----------
+        function renderTeachers() {
+            const filter = val('t_filter_lvl');
+            let html = '';
+            const sorted = [...db.teachers].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ar'));
+            const opts = '<option value="" disabled selected>اختر الأستاذ والمادة</option>' + sorted.map(t => `<option value="${esc(t.id)}">${esc(t.name)} (${esc(t.subject)} - ${esc(t.level)})</option>`).join('');
+
+            sorted.forEach(t => {
+                if (filter !== 'all' && t.level !== filter) return;
+                const ens = db.enrollments.filter(e => e.teacherId === t.id);
+                const names = ens.map(e => {
+                    const s = studentOf(e);
+                    return s ? `<li>${esc(s.name)} (${esc(s.level)})${e.status !== 'عادي' ? ' · ' + esc(e.status) : ''}</li>` : '';
+                }).sort((a, b) => a.localeCompare(b, 'ar')).join('');
+                html += `<tr>
+                    <td><b>${esc(t.name)}</b><br><small style="color:var(--muted)">${esc(t.phone)}</small><br><details><summary style="cursor:pointer;color:var(--red);font-size:13px;font-weight:700;">عرض التلاميذ (${ens.length})</summary><ul style="margin:6px 0 0;padding-right:18px;">${names || 'لا يوجد'}</ul></details></td>
+                    <td>${esc(t.subject)}<br><small style="color:var(--muted)">${esc(t.level)}</small></td>
+                    <td><b>${esc(t.price)} دج</b><br><small style="color:var(--muted)">${esc(t.sessions)} حصص/دورة</small></td>
+                    <td><span class="tag tag-trial">${esc(t.groupType)}</span><br><b>${esc(t.percentage)}% نسبة</b></td>
+                    <td><div class="acts">
+                        <button class="ib ib-edit" title="تعديل" aria-label="تعديل" onclick="openTeacherEditModal('${t.id}')">${ic('edit')}</button>
+                        <button class="ib ib-del" title="حذف" aria-label="حذف" onclick="deleteItem('Teachers', '${t.id}')">${ic('trash')}</button>
+                    </div></td>
+                </tr>`;
+            });
+            document.getElementById('t_table').innerHTML = html || '<tr><td colspan="5" class="empty-note">لا يوجد أساتذة</td></tr>';
+            const prevS = val('s_teacher'), prevE = val('en_teacher');
+            document.getElementById('s_teacher').innerHTML = opts;
+            document.getElementById('en_teacher').innerHTML = opts;
+            if (prevS) setVal('s_teacher', prevS);
+            if (prevE) setVal('en_teacher', prevE);
+        }
+
+        function addTeacher() {
+            const name = val('t_name'), phone = val('t_phone'), subject = val('t_sub'), level = val('t_lvl'), price = val('t_price'), sessions = val('t_sess'), groupType = val('t_gtype'), percentage = val('t_perc') || 50;
+            if (!name || !subject || !level) return alert("يرجى ملء البيانات الأساسية للأستاذ");
+            const id = rnd("TCH-", 1000, 9000);
+            db.teachers.push({ id, name, phone, subject, level, price, sessions, groupType, percentage });
+            renderAll(); showToast("تمت إضافة الأستاذ");
+            post('add_teacher', { id, name, phone, subject, level, price, sessions, groupType, percentage });
+            ['t_name', 't_phone', 't_sub', 't_price', 't_perc'].forEach(i => setVal(i, ''));
+        }
+
+        function openTeacherEditModal(id) {
+            const t = db.teachers.find(x => x.id === id); if (!t) return;
+            setVal('edit_t_id', t.id); setVal('edit_t_name', t.name || ''); setVal('edit_t_phone', t.phone || '');
+            setVal('edit_t_sub', t.subject || ''); setVal('edit_t_lvl', t.level || 'ابتدائي'); setVal('edit_t_price', t.price || '');
+            setVal('edit_t_sess', t.sessions || 4); setVal('edit_t_gtype', t.groupType || 'عادي'); setVal('edit_t_perc', t.percentage || 50);
+            openModal('edit-teacher-modal');
+        }
+        function saveTeacherEdit() {
+            const id = val('edit_t_id');
+            const name = val('edit_t_name'), phone = val('edit_t_phone'), subject = val('edit_t_sub'), level = val('edit_t_lvl'), price = val('edit_t_price'), sessions = val('edit_t_sess'), groupType = val('edit_t_gtype'), percentage = val('edit_t_perc');
+            if (!name || !subject || !level) return alert("يرجى ملء البيانات الأساسية");
+            const t = db.teachers.find(x => x.id === id); if (!t) return;
+            Object.assign(t, { name, phone, subject, level, price, sessions, groupType, percentage });
+            db.enrollments.forEach(e => { if (e.teacherId === id) { e.teacherName = name; e.subject = subject; } });
+            renderAll(); closeModal('edit-teacher-modal'); showToast("تم تحديث بيانات الأستاذ");
+            post('edit_teacher', { id, name, phone, subject, level, price, sessions, groupType, percentage });
+        }
+
+        // ---------- نماذج التسجيل ----------
+        function fillYears(prefix) {
+            const lvl = val(prefix + '_lvl'), yr = document.getElementById(prefix + '_year'), st = document.getElementById(prefix + '_stream');
+            yr.innerHTML = '<option value="" disabled selected>اختر السنة</option>';
+            st.innerHTML = '<option value="" disabled selected>—</option>'; st.disabled = true;
+            if (lvl) { yr.disabled = false; eduData[lvl].forEach(y => yr.innerHTML += `<option value="${y}">${y}</option>`); }
+            else yr.disabled = true;
+        }
+        function fillStreams(prefix) {
+            const lvl = val(prefix + '_lvl'), yr = val(prefix + '_year'), st = document.getElementById(prefix + '_stream');
+            if (lvl === 'ثانوي' && yr) {
+                st.disabled = false; st.innerHTML = '<option value="" disabled selected>اختر الشعبة</option>';
+                (streamData[yr] || []).forEach(s => st.innerHTML += `<option value="${s}">${s}</option>`);
+            } else { st.disabled = true; st.innerHTML = '<option value="" disabled selected>—</option>'; }
+        }
+        const updateYears = () => fillYears('s');
+        const updateStreams = () => fillStreams('s');
+        const updateEditYears = () => fillYears('edit_s');
+        const updateEditStreams = () => fillStreams('edit_s');
+
+        function fillFromTeacher(selId, sessId, gtypeId, priceId) {
+            const t = db.teachers.find(x => x.id === val(selId)); if (!t) return;
+            setVal(sessId, t.sessions || 4);
+            setVal(gtypeId, t.groupType || 'عادي');
+            if (priceId) setVal(priceId, t.price || 0);
+        }
+
+        function buildEnrollment(studentId, tch, f) {
+            return {
+                id: rnd("ENR-", 100000, 900000), studentId, teacherId: tch.id, teacherName: tch.name, subject: tch.subject,
+                price: Number(f.price ?? tch.price) || 0, sessions: Number(f.sessions) || 4, groupType: f.groupType || 'عادي',
+                status: f.status, startDate: f.status === 'تجريبي' ? '' : (f.startDate || todayISO()),
+                regularSessions: 0, extraPaid: 0, extraFree: 0, trialCount: 0, paidMonths: ''
+            };
+        }
+        const enParams = en => ({
+            enId: en.id, teacherId: en.teacherId, teacherName: en.teacherName, subject: en.subject, price: en.price,
+            sessions: en.sessions, groupType: en.groupType, status: en.status, startDate: en.startDate
+        });
+
+        function addStudent() {
+            const tch = db.teachers.find(t => t.id === val('s_teacher'));
+            const name = val('s_name').trim(), phone = val('s_phone'), level = val('s_lvl'), year = val('s_year'), stream = val('s_stream') || '';
+            if (!name || !tch || !level) return alert("يرجى إدخال اسم التلميذ والطور واختيار الأستاذ");
+            const f = { status: val('s_status'), startDate: val('s_start'), sessions: val('s_sess'), groupType: val('s_gtype') };
+
+            const existing = db.students.find(s => s.name.trim() === name);
+            if (existing) {
+                if (!confirm(`"${name}" مسجل من قبل.\nموافق: إضافة هذه المادة لنفس التلميذ (بدون تكرار الاسم)\nإلغاء: العودة وتعديل الاسم`)) return;
+                const en = buildEnrollment(existing.id, tch, f);
+                db.enrollments.push(en);
+                renderAll(); showToast("تمت إضافة المادة للتلميذ");
+                post('add_enrollment', { studentId: existing.id, ...enParams(en) });
+            } else {
+                const id = rnd("STU-", 10000, 90000);
+                const en = buildEnrollment(id, tch, f);
+                db.students.push({ id, name, phone, level, year, stream, created: todayISO() });
+                db.enrollments.push(en);
+                renderAll(); showToast("تمت إضافة التلميذ");
+                post('add_student', { id, name, phone, level, year, stream, ...enParams(en) });
+            }
+            ['s_name', 's_phone', 's_start'].forEach(i => setVal(i, ''));
+        }
+
+        // ---------- عرض التلاميذ ----------
+        function statusTag(st) {
+            if (st === 'مجاني') return `<span class="tag tag-free">${ic('gift')} مجاني</span>`;
+            if (st === 'تجريبي') return `<span class="tag tag-trial">${ic('flask')} تجريبي</span>`;
+            return '';
+        }
+
+        function renderStudents() {
+            const q = (document.getElementById('s_search').value || '').toLowerCase().trim();
+            const withEns = db.students.map(s => {
+                const ens = db.enrollments.filter(e => e.studentId === s.id)
+                    .sort((a, b) => Number(isComplete(b)) - Number(isComplete(a)));   // المنتهية أولاً داخل البطاقة
+                return { s, ens, done: ens.some(isComplete) };
+            });
+            // التلاميذ الذين انتهت حصصهم يظهرون في الأعلى ثم الترتيب الأبجدي
+            withEns.sort((a, b) => Number(b.done) - Number(a.done) || (a.s.name || '').localeCompare(b.s.name || '', 'ar'));
+            let html = '';
+
+            withEns.forEach(({ s, ens, done }) => {
+                if (q) {
+                    const hay = [s.name, s.phone, s.level, s.year, s.stream, ...ens.map(e => e.subject + ' ' + e.teacherName)].join(' ').toLowerCase();
+                    if (!hay.includes(q)) return;
+                }
+
+                const rows = ens.map(e => {
+                    const maxSess = maxOf(e);
+                    const cur = e.regularSessions % maxSess;
+                    const complete = isComplete(e);
+                    const ci = cycleInfo(e);
+                    const isTrial = e.status === 'تجريبي', isFree = e.status === 'مجاني';
+
+                    let sessCell;
+                    if (isTrial) {
+                        sessCell = `<span class="tag tag-trial">${ic('pause')} حساب مجمّد</span><br><small>حضر ${e.trialCount} حصة تجريبية (لا تُحسب)</small>`;
+                    } else {
+                        const pct = complete ? 100 : Math.round(cur / maxSess * 100);
+                        sessCell = (complete
+                            ? `<span class="tag tag-done">${ic('alert')} انتهت الحصص ${maxSess}/${maxSess}</span>`
+                            : `<b>الحصة ${cur} / ${maxSess}</b>`) +
+                            `<div class="prog ${complete ? 'full' : ''}"><i style="width:${pct}%"></i></div>
+                            <small>إضافية مدفوعة: ${e.extraPaid} · مجانية: ${e.extraFree}</small>`;
+                    }
+
+                    let dateCell;
+                    if (isTrial) dateCell = '<small>يبدأ العدّ عند التفعيل</small>';
+                    else if (!ci) dateCell = `<small>حدّد تاريخ البداية من التعديل</small>`;
+                    else dateCell = `<small>سجّل ${fmtShort(ci.start)}</small><br><b class="${ci.due ? 'due' : ''}">ينتهي ${fmtShort(ci.end)}</b><br><small>الدورة الجديدة: ${fmtLong(ci.next)}</small>`;
+
+                    const payCell = isTrial ? '<small>—</small>' : isFree ? '<small>لا يدفع</small>' : (e.paidMonths ? `<span class="num-green">${esc(e.paidMonths)}</span>` : '<span class="tag tag-unpaid">غير مسدد</span>');
+
+                    let btns = `<button class="ib ib-ok" title="تسجيل حضور" aria-label="تسجيل حضور" onclick="openAttModal('${e.id}')">${ic('attend')}</button>`;
+                    if (isTrial) btns += `<button class="ib ib-dark" title="تفعيل الاشتراك" aria-label="تفعيل الاشتراك" onclick="activateTrial('${e.id}')">${ic('badgecheck')}</button>`;
+                    else {
+                        if (!isFree) btns += `<button class="ib ib-pay" title="تسديد شهر" aria-label="تسديد شهر" onclick="payMonth('${e.id}')">${ic('cash')}</button>`;
+                        btns += `<button class="ib ${complete ? 'ib-dark' : ''}" title="دورة جديدة" aria-label="دورة جديدة" onclick="newCycle('${e.id}')">${ic('renew')}</button>`;
+                    }
+                    btns += `<button class="ib ib-edit" title="تعديل" aria-label="تعديل" onclick="openEnrollmentModal('edit','${e.id}')">${ic('edit')}</button>
+                             <button class="ib ib-del" title="حذف" aria-label="حذف" onclick="deleteItem('Enrollments','${e.id}')">${ic('trash')}</button>`;
+
+                    return `<div class="en-row ${complete ? 'done' : ''}">
+                        <div><b>${esc(e.subject)}</b> ${statusTag(e.status)}<br><small>${esc(e.teacherName)} · ${esc(e.groupType)}</small><br><small>${isFree ? 'مجاني' : esc(e.price) + ' دج'}</small></div>
+                        <div>${sessCell}</div>
+                        <div>${dateCell}</div>
+                        <div>${payCell}</div>
+                        <div class="en-actions">${btns}</div>
+                    </div>`;
+                }).join('') || '<div class="empty-note">لا يوجد تسجيل، اضغط على زر إضافة مادة</div>';
+
+                html += `<div class="st-card ${done ? 'has-done' : ''}">
+                    <div class="st-head">
+                        <div class="st-id"><div class="av ${done ? 'red' : ''}">${esc(initial(s.name))}</div>
+                            <div><span class="nm">${esc(s.name)}</span><small>${esc(s.phone)} · ${esc(s.level)} ${esc(s.year)} ${s.stream ? '(' + esc(s.stream) + ')' : ''}</small></div></div>
+                        <div class="acts">
+                            ${done ? `<span class="tag tag-done">${ic('bell')} انتهت حصصه</span>` : ''}
+                            <button class="btn btn-dark sm" onclick="openEnrollmentModal('add','${s.id}')">${ic('plus', 'ic-sm')} مادة</button>
+                            <button class="ib ib-edit" title="تعديل بيانات التلميذ" aria-label="تعديل بيانات التلميذ" onclick="openStudentEditModal('${s.id}')">${ic('edit')}</button>
+                            <button class="ib ib-del" title="حذف التلميذ" aria-label="حذف التلميذ" onclick="deleteItem('Students','${s.id}')">${ic('trash')}</button>
+                        </div>
+                    </div>${rows}</div>`;
+            });
+            document.getElementById('s_list').innerHTML = html || '<div class="card empty-note">لا يوجد تلاميذ</div>';
+        }
+
+        // ---------- تعديل التلميذ ----------
+        function openStudentEditModal(id) {
+            const s = db.students.find(x => x.id === id); if (!s) return;
+            setVal('edit_s_id', s.id); setVal('edit_s_name', s.name || ''); setVal('edit_s_phone', s.phone || '');
+            setVal('edit_s_lvl', s.level || 'ابتدائي');
+            fillYears('edit_s'); setVal('edit_s_year', s.year || '');
+            fillStreams('edit_s'); if (s.stream) setVal('edit_s_stream', s.stream);
+            const ens = db.enrollments.filter(e => e.studentId === id);
+            document.getElementById('edit_s_enlist').innerHTML = ens.length
+                ? '<div class="note-box"><b>التسجيلات الحالية</b><br>' + ens.map(e => `${esc(e.subject)} — ${esc(e.teacherName)} ${e.status !== 'عادي' ? '(' + esc(e.status) + ')' : ''}`).join('<br>') + '</div>'
+                : '';
+            openModal('edit-student-modal');
+        }
+        function saveStudentEdit() {
+            const id = val('edit_s_id');
+            const name = val('edit_s_name').trim(), phone = val('edit_s_phone'), level = val('edit_s_lvl'), year = val('edit_s_year'), stream = val('edit_s_stream') || '';
+            if (!name || !level) return alert("يرجى إدخال اسم التلميذ والطور");
+            const s = db.students.find(x => x.id === id); if (!s) return;
+            Object.assign(s, { name, phone, level, year, stream });
+            renderAll(); closeModal('edit-student-modal'); showToast("تم تحديث بيانات التلميذ");
+            post('edit_student', { id, name, phone, level, year, stream });
+        }
+        function addEnrollmentFromEdit() {
+            const id = val('edit_s_id');
+            closeModal('edit-student-modal');
+            openEnrollmentModal('add', id);
+        }
+
+        // ---------- إضافة / تعديل تسجيل ----------
+        function openEnrollmentModal(mode, id) {
+            setVal('en_mode', mode);
+            if (mode === 'add') {
+                const s = db.students.find(x => x.id === id); if (!s) return;
+                document.getElementById('en_title').innerText = 'إضافة تسجيل (مادة أخرى)';
+                document.getElementById('en_student_name').innerText = s.name;
+                setVal('en_sid', s.id); setVal('en_id', '');
+                setVal('en_teacher', ''); setVal('en_status', 'عادي'); setVal('en_price', ''); setVal('en_sess', 4); setVal('en_gtype', 'عادي'); setVal('en_start', todayISO());
+            } else {
+                const e = db.enrollments.find(x => x.id === id); if (!e) return;
+                const s = studentOf(e);
+                document.getElementById('en_title').innerText = 'تعديل التسجيل';
+                document.getElementById('en_student_name').innerText = s ? s.name : '';
+                setVal('en_sid', e.studentId); setVal('en_id', e.id);
+                setVal('en_teacher', e.teacherId); setVal('en_status', e.status); setVal('en_price', e.price); setVal('en_sess', e.sessions);
+                setVal('en_gtype', e.groupType); setVal('en_start', e.startDate || todayISO());
+            }
+            openModal('enrollment-modal');
+        }
+
+        function saveEnrollment() {
+            const mode = val('en_mode'), sid = val('en_sid');
+            const tch = db.teachers.find(t => t.id === val('en_teacher'));
+            if (!tch) return alert("يرجى اختيار الأستاذ والمادة");
+            const f = { status: val('en_status'), price: val('en_price'), sessions: val('en_sess'), groupType: val('en_gtype'), startDate: val('en_start') };
+
+            if (mode === 'add') {
+                const en = buildEnrollment(sid, tch, f);
+                db.enrollments.push(en);
+                renderAll(); closeModal('enrollment-modal'); showToast("تمت إضافة التسجيل");
+                post('add_enrollment', { studentId: sid, ...enParams(en) });
+            } else {
+                const en = db.enrollments.find(x => x.id === val('en_id')); if (!en) return;
+                const reset = en.status === 'تجريبي' && f.status !== 'تجريبي';
+                Object.assign(en, {
+                    teacherId: tch.id, teacherName: tch.name, subject: tch.subject, price: Number(f.price) || 0,
+                    sessions: Number(f.sessions) || 4, groupType: f.groupType, status: f.status,
+                    startDate: f.status === 'تجريبي' ? '' : (f.startDate || todayISO())
+                });
+                if (reset) { en.regularSessions = 0; en.extraPaid = 0; en.extraFree = 0; }
+                renderAll(); closeModal('enrollment-modal'); showToast("تم تحديث التسجيل");
+                post('edit_enrollment', {
+                    id: en.id, teacherId: en.teacherId, teacherName: en.teacherName, subject: en.subject, price: en.price,
+                    sessions: en.sessions, groupType: en.groupType, status: en.status, startDate: en.startDate, resetCounts: reset ? '1' : '0'
+                });
+            }
+        }
+
+        function activateTrial(id) {
+            const en = db.enrollments.find(x => x.id === id); if (!en) return;
+            const s = studentOf(en);
+            if (!confirm(`تفعيل اشتراك ${s ? s.name : ''} في ${en.subject} ابتداءً من اليوم؟\nستبدأ الحصص من 0 ولن تُحسب الحصص التجريبية.`)) return;
+            Object.assign(en, { status: 'عادي', startDate: todayISO(), regularSessions: 0, extraPaid: 0, extraFree: 0 });
+            renderAll(); showToast("تم تفعيل الاشتراك");
+            post('edit_enrollment', { id, status: 'عادي', startDate: en.startDate, resetCounts: '1' });
+        }
+
+        // ---------- الحضور والتسديد ----------
+        function openAttModal(enId) {
+            selectedEnId = enId;
+            const en = db.enrollments.find(x => x.id === enId); if (!en) return;
+            const s = studentOf(en);
+            document.getElementById('att-student-name').innerText = `${s ? s.name : ''} · ${en.subject}`;
+            const opt = (type, icon, bg, fg, title, sub) => `<button class="opt" onclick="submitAttendance('${type}')">
+                <span class="o-ic" style="background:${bg};color:${fg}">${ic(icon, 'ic-lg')}</span><span><b>${title}</b><small>${sub}</small></span></button>`;
+            let b;
+            if (en.status === 'تجريبي') {
+                b = `<div class="note-box">الحساب تجريبي ومجمّد: هذه الحصة لن تُحسب ضمن الدورة.</div>` +
+                    opt('regular', 'flask', 'var(--amber-soft)', 'var(--amber)', 'حصة تجريبية', 'تسجّل الحضور دون احتسابها');
+            } else {
+                b = opt('regular', 'book', 'var(--green-soft)', 'var(--green)', 'حصة عادية', 'تُحسب ضمن حصص الدورة') +
+                    opt('extra_paid', 'cash', 'var(--amber-soft)', 'var(--amber)', 'حصة إضافية مدفوعة', 'تُحسب أيضاً كحصة عادية') +
+                    opt('extra_free', 'gift', 'var(--soft)', 'var(--ink-2)', 'حصة إضافية مجانية', 'لا تُحسب ضمن الدورة');
+            }
+            document.getElementById('att-buttons').innerHTML = b;
+            openModal('attendance-modal');
+        }
+
+        function submitAttendance(type) {
+            closeModal('attendance-modal');
+            const en = db.enrollments.find(x => x.id === selectedEnId); if (!en) return;
+            if (en.status === 'تجريبي') en.trialCount++;
+            else if (type === 'regular') en.regularSessions++;
+            else if (type === 'extra_paid') { en.extraPaid++; en.regularSessions++; }
+            else if (type === 'extra_free') en.extraFree++;
+            renderAll(); showToast("تم تسجيل الحضور");
+            post('mark_attendance', { id: selectedEnId, type });
+        }
+
+        function payMonth(id) {
+            const en = db.enrollments.find(x => x.id === id); if (!en) return;
+            const m = prompt("أدخل اسم الشهر المراد تسديده:", monthName(en.startDate));
+            if (!m) return;
+            en.paidMonths = en.paidMonths ? en.paidMonths + " - " + m : m;
+            renderAll(); showToast("تم تسديد الشهر");
+            post('pay_month', { id, month: m });
+        }
+
+        function newCycle(id) {
+            const en = db.enrollments.find(x => x.id === id); if (!en) return;
+            const ci = cycleInfo(en);
+            const newStart = ci ? iso(ci.next) : todayISO();
+            if (!confirm(`بدء دورة جديدة تنطلق ${fmtLong(parseISO(newStart))}؟\nسيتم تصفير الحصص.`)) return;
+            Object.assign(en, { regularSessions: 0, extraPaid: 0, extraFree: 0, startDate: newStart });
+            renderAll(); showToast("تم بدء دورة جديدة");
+            post('reset_sessions', { id, startDate: newStart });
+        }
+
+        // ---------- الدورات ----------
+        function addCourse() {
+            const teacher = val('c_teacher').trim(), subject = val('c_subject').trim(), price = val('c_price'), date = val('c_date') || todayISO();
+            const percentage = val('c_perc') === '' ? 50 : val('c_perc');
+            if (!teacher || !subject || !price) return alert("يرجى إدخال الأستاذ والمادة وسعر الدورة");
+            const id = rnd("CRS-", 1000, 9000);
+            db.courses.push({ id, teacher, subject, price: Number(price), date, percentage: Number(percentage) });
+            openCourses.add(id);
+            renderAll(); showToast("تمت إضافة الدورة");
+            post('add_course', { id, teacher, subject, price, date, percentage });
+            ['c_teacher', 'c_subject', 'c_price', 'c_date', 'c_perc'].forEach(i => setVal(i, ''));
+        }
+
+        function renderCourses() {
+            const list = [...db.courses].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+            document.getElementById('c_list').innerHTML = list.map(c => {
+                const sts = db.courseStudents.filter(x => x.courseId === c.id);
+                const paid = sts.filter(x => x.paid === 'نعم').length;
+                const rows = sts.map(x => `<div class="cs-row">
+                        <span style="display:flex;align-items:center;gap:10px;"><div class="av" style="width:34px;height:34px;font-size:14px;">${esc(initial(x.name))}</div><span><b>${esc(x.name)}</b><br><small style="color:var(--muted)">${esc(x.phone)}</small></span></span>
+                        <span class="acts" style="align-items:center;">
+                            <span class="tag ${x.paid === 'نعم' ? 'tag-paid' : 'tag-unpaid'}">${x.paid === 'نعم' ? 'دفع' : 'لم يدفع'}</span>
+                            <button class="btn sm ${x.paid === 'نعم' ? 'btn-ghost' : 'btn-primary'}" onclick="toggleCoursePaid('${x.id}')">${x.paid === 'نعم' ? ic('undo', 'ic-sm') + ' إلغاء الدفع' : ic('cash', 'ic-sm') + ' تأكيد الدفع'}</button>
+                            <button class="ib ib-del" title="حذف" aria-label="حذف" onclick="deleteItem('CourseStudents','${x.id}')">${ic('trash')}</button>
+                        </span></div>`).join('') || '<div class="empty-note">لم يسجل أي طالب بعد</div>';
+                let d; try { d = fmtLong(parseISO(c.date)); } catch (e) { d = c.date; }
+                return `<details class="course-card" ${openCourses.has(c.id) ? 'open' : ''} ontoggle="toggleOpen('${c.id}', this.open)">
+                    <summary>
+                        <span><b style="font-size:16.5px;">${esc(c.subject)}</b> · ${esc(c.teacher)}<br><small style="color:var(--muted)">${d} · ${esc(c.price)} دج للطالب</small></span>
+                        <span><span class="tag tag-trial">${sts.length} مسجل</span> <span class="tag tag-paid">${paid} دفع</span> <span class="tag tag-unpaid">${sts.length - paid} لم يدفع</span></span>
+                    </summary>
+                    <div class="course-body">
+                        <div style="padding:12px 0; display:flex; gap:8px; flex-wrap:wrap; justify-content:space-between; align-items:center;">
+                            <b>المحصّل: <span class="num-green">${paid * c.price} دج</span></b>
+                            <span class="acts">
+                                <button class="btn btn-ghost sm" onclick="openCourseEdit('${c.id}')">${ic('edit', 'ic-sm')} تعديل الدورة</button>
+                                <button class="btn btn-ghost sm" style="color:var(--red)" onclick="deleteItem('Courses','${c.id}')">${ic('trash', 'ic-sm')} حذف الدورة</button>
+                            </span>
+                        </div>
+                        ${rows}
+                        <div class="cs-add">
+                            <div class="f"><label>اسم الطالب</label><input type="text" id="cs_n_${c.id}" list="students_dl" placeholder="الاسم" onchange="fillCoursePhone('${c.id}')"></div>
+                            <div class="f"><label>رقم الهاتف</label><input type="text" id="cs_p_${c.id}" placeholder="05..."></div>
+                            <div class="f"><label>الدفع</label><select id="cs_s_${c.id}"><option value="لا">لم يدفع</option><option value="نعم">دفع</option></select></div>
+                            <div class="f"><button class="btn btn-primary btn-block" onclick="addCourseStudent('${c.id}')">${ic('plus', 'ic-sm')} تسجيل الطالب</button></div>
+                        </div>
+                    </div></details>`;
+            }).join('') || '<div class="card empty-note">لا توجد دورات بعد</div>';
+        }
+
+        function toggleOpen(id, open) { if (open) openCourses.add(id); else openCourses.delete(id); }
+        function fillCoursePhone(cid) {
+            const name = val('cs_n_' + cid).trim();
+            const s = db.students.find(x => x.name.trim() === name);
+            if (s && !val('cs_p_' + cid)) setVal('cs_p_' + cid, s.phone || '');
+        }
+        function addCourseStudent(courseId) {
+            const name = val('cs_n_' + courseId).trim(), phone = val('cs_p_' + courseId), paid = val('cs_s_' + courseId);
+            if (!name) return alert("يرجى إدخال اسم الطالب");
+            const id = rnd("CST-", 100000, 900000);
+            db.courseStudents.push({ id, courseId, name, phone, paid, paidDate: paid === 'نعم' ? todayISO() : '' });
+            openCourses.add(courseId);
+            renderAll(); showToast("تم تسجيل الطالب في الدورة");
+            post('add_course_student', { id, courseId, name, phone, paid });
+        }
+        function toggleCoursePaid(id) {
+            const x = db.courseStudents.find(i => i.id === id); if (!x) return;
+            x.paid = x.paid === 'نعم' ? 'لا' : 'نعم';
+            renderAll(); showToast("تم التحديث");
+            post('toggle_course_paid', { id, paid: x.paid });
+        }
+        function openCourseEdit(id) {
+            const c = db.courses.find(x => x.id === id); if (!c) return;
+            setVal('edit_c_id', c.id); setVal('edit_c_teacher', c.teacher); setVal('edit_c_subject', c.subject);
+            setVal('edit_c_price', c.price); setVal('edit_c_date', c.date); setVal('edit_c_perc', c.percentage);
+            openModal('edit-course-modal');
+        }
+        function saveCourseEdit() {
+            const id = val('edit_c_id');
+            const teacher = val('edit_c_teacher').trim(), subject = val('edit_c_subject').trim(), price = val('edit_c_price'), date = val('edit_c_date'), percentage = val('edit_c_perc') === '' ? 50 : val('edit_c_perc');
+            if (!teacher || !subject || !price) return alert("يرجى ملء البيانات الأساسية");
+            const c = db.courses.find(x => x.id === id); if (!c) return;
+            Object.assign(c, { teacher, subject, price: Number(price), date, percentage: Number(percentage) });
+            renderAll(); closeModal('edit-course-modal'); showToast("تم تحديث الدورة");
+            post('edit_course', { id, teacher, subject, price, date, percentage });
+        }
+
+        // ---------- المالية ----------
+        function renderFinances() {
+            let fHtml = '', eHtml = '', cHtml = '';
+            let tSchool = 0, tTeach = 0, tGross = 0;
+
+            db.teachers.forEach(t => {
+                let rev = 0;
+                db.enrollments.filter(e => e.teacherId === t.id && e.status === 'عادي').forEach(e => {
+                    const base = Number(e.price || 0);
+                    const sessPrice = base / (Number(e.sessions) || 4);
+                    rev += base + Number(e.extraPaid || 0) * sessPrice;
+                });
+                const perc = Number(t.percentage);
+                const tShare = rev * perc / 100, sShare = rev - tShare;
+                tGross += rev; tTeach += tShare; tSchool += sShare;
+                fHtml += `<tr>
+                    <td><b>${esc(t.name)}</b><br><small style="color:var(--muted)">${esc(t.subject)}</small></td>
+                    <td class="num-blue">${rev.toFixed(0)} دج</td><td>${perc}%</td>
+                    <td class="num-amber">${tShare.toFixed(0)} دج</td><td class="num-green">${sShare.toFixed(0)} دج</td></tr>`;
+            });
+
+            db.courses.forEach(c => {
+                const paid = db.courseStudents.filter(x => x.courseId === c.id && x.paid === 'نعم').length;
+                const rev = paid * Number(c.price || 0);
+                const perc = Number(c.percentage);
+                const tShare = rev * perc / 100, sShare = rev - tShare;
+                tGross += rev; tTeach += tShare; tSchool += sShare;
+                cHtml += `<tr>
+                    <td><b>${esc(c.subject)}</b><br><small style="color:var(--muted)">${esc(c.teacher)} · ${perc}%</small></td>
+                    <td>${paid}</td><td class="num-blue">${rev.toFixed(0)} دج</td>
+                    <td class="num-amber">${tShare.toFixed(0)} دج</td><td class="num-green">${sShare.toFixed(0)} دج</td></tr>`;
+            });
+
+            let totalExpenses = 0;
+            db.expenses.forEach(e => {
+                totalExpenses += Number(e.amount);
+                eHtml += `<tr><td><b>${esc(e.title)}</b></td><td>${esc(e.category)}</td><td>${esc(e.date)}</td>
+                    <td class="num-red">${esc(e.amount)} دج</td>
+                    <td><button class="ib ib-del" title="حذف" aria-label="حذف" onclick="deleteItem('Expenses', '${e.id}')">${ic('trash')}</button></td></tr>`;
+            });
+
+            document.getElementById('f_table').innerHTML = fHtml || '<tr><td colspan="5" class="empty-note">لا يوجد أساتذة</td></tr>';
+            document.getElementById('c_fin_table').innerHTML = cHtml || '<tr><td colspan="5" class="empty-note">لا توجد دورات</td></tr>';
+            document.getElementById('e_table').innerHTML = eHtml || '<tr><td colspan="5" class="empty-note">لا توجد مصاريف</td></tr>';
+
+            const net = tSchool - totalExpenses;
+            const np = document.getElementById('net_profit');
+            np.innerText = net.toFixed(0);
+            np.style.color = net < 0 ? 'var(--red)' : 'var(--green)';
+            window.currentFinancialSummary = { totalIncome: tGross, teacherPayouts: tTeach, expenses: totalExpenses, netProfit: net };
+        }
+
+        function addExpense() {
+            const title = val('e_title'), amount = val('e_amount'), category = val('e_cat');
+            if (!title || !amount) return alert("يرجى إدخال المصروف والمبلغ");
+            const id = rnd("EXP-", 1000, 9000);
+            db.expenses.push({ id, title, amount, category, date: new Date().toLocaleDateString('ar-DZ') });
+            renderAll(); showToast("تم تسجيل المصروف");
+            post('add_expense', { id, title, amount, category });
+            setVal('e_title', ''); setVal('e_amount', '');
+        }
+
+        function archiveMonth() {
+            const mName = prompt("أدخل مسمى الدورة أو الشهر المراد أرشفته (مثال: نوفمبر 2026):");
+            if (mName && window.currentFinancialSummary) {
+                const sum = window.currentFinancialSummary;
+                showToast("جاري أرشفة البيانات المالية...");
+                post('archive_month', { monthYear: mName, totalIncome: sum.totalIncome, teacherPayouts: sum.teacherPayouts, expenses: sum.expenses, netProfit: sum.netProfit }).then(() => fetchData(true));
+            }
+        }
+
+        function deleteItem(sheet, id) {
+            const msg = sheet === 'Students' ? "سيتم حذف التلميذ وكل تسجيلاته نهائياً. متأكد؟"
+                : sheet === 'Courses' ? "سيتم حذف الدورة وكل طلبتها نهائياً. متأكد؟" : "هل أنت متأكد من الحذف النهائي؟";
+            if (!confirm(msg)) return;
+            if (sheet === 'Teachers') db.teachers = db.teachers.filter(i => i.id !== id);
+            if (sheet === 'Students') { db.students = db.students.filter(i => i.id !== id); db.enrollments = db.enrollments.filter(i => i.studentId !== id); }
+            if (sheet === 'Enrollments') db.enrollments = db.enrollments.filter(i => i.id !== id);
+            if (sheet === 'Expenses') db.expenses = db.expenses.filter(i => i.id !== id);
+            if (sheet === 'Courses') { db.courses = db.courses.filter(i => i.id !== id); db.courseStudents = db.courseStudents.filter(i => i.courseId !== id); }
+            if (sheet === 'CourseStudents') db.courseStudents = db.courseStudents.filter(i => i.id !== id);
+            renderAll(); showToast("تم الحذف");
+            post('delete_item', { sheet, id });
+        }
+
+        // ---------- تثبيت التطبيق (PWA) ----------
+        let deferredPrompt = null;
+        const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+        const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+        window.addEventListener('beforeinstallprompt', e => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').style.display = 'flex';
+        });
+        window.addEventListener('appinstalled', () => { document.getElementById('install-btn').style.display = 'none'; deferredPrompt = null; });
+        if (!isStandalone() && isIOS) document.getElementById('install-btn').style.display = 'flex';
+
+        async function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('install-btn').style.display = 'none';
+            } else if (isIOS) {
+                alert('على الآيفون: اضغط زر المشاركة في Safari ثم اختر "إضافة إلى الشاشة الرئيسية".');
+            } else {
+                alert('افتح قائمة المتصفح ثم اختر "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية".');
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => { }));
+        }
+
+        hydrateIcons();
+    </script>
+</body>
+</html>
